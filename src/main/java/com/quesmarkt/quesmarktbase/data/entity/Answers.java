@@ -1,6 +1,6 @@
 package com.quesmarkt.quesmarktbase.data.entity;
 
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,14 +10,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Entity
 @Table(name = "answers")
 public class Answers extends BaseEntity<Long> {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
     private String imgUrl;
 
     @Override
-    public Long getIdentifier() {
+    public Long getId() {
         return id;
     }
 }

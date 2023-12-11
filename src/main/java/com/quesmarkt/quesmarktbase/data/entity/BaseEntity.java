@@ -23,5 +23,5 @@ public abstract class BaseEntity<T> {
     private String createdBy;
     private ZonedDateTime createdDate;
     private ZonedDateTime lastModifiedDate;
-    public abstract T getIdentifier();
+    public abstract T getId();
 }

@@ -12,9 +12,12 @@ public class AuditingEntityListener {
     @PrePersist
     @PreUpdate
     public void setLastModifiedDate(@SuppressWarnings("rawtypes") BaseEntity entity) {
-        if (entity.getIdentifier() == null) {
+        if (entity.getId() == null) {
             entity.setCreatedDate(ZonedDateTime.now());
         }
         entity.setLastModifiedDate(ZonedDateTime.now());
+        if (entity.getCreatedBy() == null) {
+            entity.setCreatedBy("SYSTEM");
+        }
     }
 }

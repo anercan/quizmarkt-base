@@ -2,8 +2,7 @@ package com.quesmarkt.quesmarktbase.data.entity;
 
 import com.quesmarkt.quesmarktbase.data.converter.LongListConverter;
 import com.quesmarkt.quesmarktbase.data.enums.UserQuizState;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,18 +15,30 @@ import java.util.List;
 
 @Getter
 @Setter
+@Entity
 @Table(name = "user_quiz")
 public class UserQuiz {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long userId;
-    private Quiz quiz;
     private int timeTaken;
     private UserQuizState state;
     private ZonedDateTime completeDate;
 
+    @OneToOne
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
+
     @Convert(converter = LongListConverter.class)
     private List<Long> correctAnswers;
 
-    @Convert(converter = LongListConverter.class)
-    private List<Long> wrongAnswers;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_quiz_id")
+    private List<UserWrongAnswer> wrongAnswers;
 
+    @Override
+    public String toString() {
+        return "UserQuiz{id=" + id + '}';
+    }
 }
