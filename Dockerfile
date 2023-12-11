@@ -16,7 +16,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file into the container
-COPY --from=build /app/target/user-management-service-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /app/target/quesmarktbase-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Expose the port on which your Java application will run
 EXPOSE 8080
