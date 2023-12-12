@@ -25,8 +25,6 @@ public class UserWrongAnswer {
     @JoinColumn(name = "wrong_answer_id")
     private Answers wrongAnswer;
 
-    //private String explanation;
-
     @Override
     public String toString() {
         return "UserWrongAnswer{id=" + id + '}';

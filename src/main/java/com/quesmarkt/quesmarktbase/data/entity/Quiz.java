@@ -22,6 +22,7 @@ public class Quiz extends BaseEntity<Long> {
 
     private String name;
     private boolean active;
+    private int priority;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "QUIZ_ATTRIBUTES", joinColumns = @JoinColumn(name = "quiz_id"))

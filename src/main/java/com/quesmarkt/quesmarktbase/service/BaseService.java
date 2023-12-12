@@ -11,4 +11,11 @@ public class BaseService {
 
     protected static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
+    protected int getAppId() {
+        return 1;
+    }
+
+    protected Long getUserId() {
+        return 1L;
+    }
 }

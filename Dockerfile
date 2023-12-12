@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=build /app/target/quesmarktbase-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Expose the port on which your Java application will run
-EXPOSE 8080
+EXPOSE 8081
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]

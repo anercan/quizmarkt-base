@@ -25,6 +25,8 @@ public class UserQuiz {
     private int timeTaken;
     private UserQuizState state;
     private ZonedDateTime completeDate;
+    private int appId; // todo dbde check et Longdu
+    private Long quizGroupId;
 
     @OneToOne
     @JoinColumn(name = "quiz_id")

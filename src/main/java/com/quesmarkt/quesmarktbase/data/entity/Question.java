@@ -24,6 +24,8 @@ public class Question extends BaseEntity<Long> {
     private String imgUrl;
     private Long correctAnswerId;
     private boolean active;
+    private String explanation;
+    private int priority;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "QUESTION_ATTRIBUTES", joinColumns = @JoinColumn(name = "question_id"))
