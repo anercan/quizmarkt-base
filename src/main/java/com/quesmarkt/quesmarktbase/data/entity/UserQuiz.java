@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,14 +34,18 @@ public class UserQuiz {
     private Quiz quiz;
 
     @Convert(converter = LongListConverter.class)
-    private List<Long> correctAnswers;
+    private List<Long> correctAnswers = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_quiz_id")
-    private List<UserWrongAnswer> wrongAnswers;
+    private List<UserWrongAnswer> wrongAnswers = new ArrayList<>();
 
     @Override
     public String toString() {
         return "UserQuiz{id=" + id + '}';
+    }
+
+    public Long getQuizId() {
+        return quiz.getId();
     }
 }

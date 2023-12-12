@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/sign-in")
+@RequestMapping("/quiz-group")
 public class QuizGroupController {
 
     private final QuizGroupService quizGroupService;

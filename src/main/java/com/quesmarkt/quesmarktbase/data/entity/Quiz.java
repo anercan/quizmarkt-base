@@ -30,7 +30,7 @@ public class Quiz extends BaseEntity<Long> {
     @Column(name = "param_value", length = 512)
     private Map<String, String> attributes;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "QUIZ_QUESTIONS", joinColumns = @JoinColumn(name = "quiz_id"), inverseJoinColumns = @JoinColumn(name = "question_id"))
     private List<Question> questionList;
 
