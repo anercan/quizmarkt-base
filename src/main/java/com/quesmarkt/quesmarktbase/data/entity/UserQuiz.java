@@ -34,11 +34,11 @@ public class UserQuiz {
     private Quiz quiz;
 
     @Convert(converter = LongListConverter.class)
-    private List<Long> correctAnswers = new ArrayList<>();
+    private List<Long> correctQuestionList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_quiz_id")
-    private List<UserWrongAnswer> wrongAnswers = new ArrayList<>();
+    private List<UserWrongAnswer> wrongQuestionList = new ArrayList<>();
 
     @Override
     public String toString() {

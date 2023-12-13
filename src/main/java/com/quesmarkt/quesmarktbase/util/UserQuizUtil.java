@@ -8,6 +8,6 @@ import com.quesmarkt.quesmarktbase.data.entity.UserQuiz;
 public class UserQuizUtil {
 
     public static int getSolvedQuestionDataOfUserQuiz(UserQuiz userQuiz) { //todo kullanıldığı yer graph yapılabilir
-        return userQuiz.getCorrectAnswers().size() + userQuiz.getWrongAnswers().size();
+        return userQuiz.getCorrectQuestionList().size() + userQuiz.getWrongQuestionList().size();
     }
 }

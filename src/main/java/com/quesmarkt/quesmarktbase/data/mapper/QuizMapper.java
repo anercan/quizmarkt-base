@@ -2,6 +2,7 @@ package com.quesmarkt.quesmarktbase.data.mapper;
 
 import com.quesmarkt.quesmarktbase.data.entity.Quiz;
 import com.quesmarkt.quesmarktbase.data.entity.UserQuiz;
+import com.quesmarkt.quesmarktbase.data.response.QuizResponse;
 import com.quesmarkt.quesmarktbase.data.response.QuizResponseWithUserData;
 import org.mapstruct.Mapper;
 
@@ -21,7 +22,9 @@ public interface QuizMapper {
         QuizResponseWithUserData quizGroupWithUserData = this.toQuizResponseWithUserData(quiz);
         UserQuiz userQuiz = quizIdUserQuizMap.get(quiz.getId());
         quizGroupWithUserData.setSolvedCount(getSolvedQuestionDataOfUserQuiz(userQuiz));
-        //quizGroupWithUserData.setQuestionCount();
+        quizGroupWithUserData.setQuestionCount(quiz.getQuestionList().size()); //todo check here
         return quizGroupWithUserData;
     }
+
+    QuizResponse toQuizResponse(Quiz quiz);
 }

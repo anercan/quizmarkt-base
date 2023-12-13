@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author anercan
@@ -29,6 +30,15 @@ public class QuizManager extends BaseManager {
         } catch (Exception e) {
             logger.error("getQuizListWithGroupId got exception.userId:{},groupId:{}", getUserId(), e);
             return Collections.emptyList();
+        }
+    }
+
+    public Optional<Quiz> getQuizWithId(Long quizId) {
+        try {
+            return quizRepository.findById(quizId);
+        } catch (Exception e) {
+            logger.error("getWithId got exception.userId:{}", getUserId(), e);
+            return Optional.empty();
         }
     }
 }

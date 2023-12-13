@@ -5,10 +5,7 @@ import com.quesmarkt.quesmarktbase.data.repository.UserQuizRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,10 +41,18 @@ public class UserQuizManager extends BaseManager {
     public Map<Long, UserQuiz> getQuizIdAndSolvedQuestionCountMap(Long quizGroupId) {
         try {
             List<UserQuiz> userQuizListInQuizGroup = getAllByAppIdAndUserIdAndQuizGroupIdIn(Collections.singleton(quizGroupId));
-            return userQuizListInQuizGroup.stream().collect(Collectors.toMap(UserQuiz::getQuizId,Function.identity()));
+            return userQuizListInQuizGroup.stream().collect(Collectors.toMap(UserQuiz::getQuizId, Function.identity()));
         } catch (Exception e) {
             logger.error("getQuizIdAndSolvedQuestionCountMap got exception.userId:{},quizGroupId:{}", getUserId(), quizGroupId, e);
             return Collections.emptyMap();
         }
+    }
+
+    public Optional<UserQuiz> getUserQuizWithQuizIdAndUserId(Long quizId) {
+        return userQuizRepository.findByQuiz_IdAndUserId(quizId, getUserId());
+    }
+
+    public List<UserQuiz> getUserQuizList() {
+        return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
     }
 }
