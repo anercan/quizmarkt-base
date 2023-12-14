@@ -17,5 +17,5 @@ public class UserQuizInListResponse {
     private UserQuizState state;
     private ZonedDateTime completeDate;
     private Long quizGroupId;
-    private int solvedCount;
+    private QuizLightResponse quiz;
 }

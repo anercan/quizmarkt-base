@@ -9,4 +9,5 @@ import lombok.Data;
 @Data
 public class UserWrongAnswerResponse {
     private AnswerResponse wrongAnswer;
+    private QuestionResponseForReview question;
 }

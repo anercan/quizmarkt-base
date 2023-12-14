@@ -22,7 +22,7 @@ public interface QuizMapper {
         QuizResponseWithUserData quizGroupWithUserData = this.toQuizResponseWithUserData(quiz);
         UserQuiz userQuiz = quizIdUserQuizMap.get(quiz.getId());
         quizGroupWithUserData.setSolvedCount(getSolvedQuestionDataOfUserQuiz(userQuiz));
-        quizGroupWithUserData.setQuestionCount(quiz.getQuestionList().size()); //todo check here
+        quizGroupWithUserData.setQuestionCount(quiz.getQuestionList().size()); //todo 3 sorgu atıyor kesin count sorgusu yaz
         return quizGroupWithUserData;
     }
 

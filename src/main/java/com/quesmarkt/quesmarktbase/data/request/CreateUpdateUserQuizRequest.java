@@ -8,9 +8,8 @@ import lombok.Data;
 
 @Data
 public class CreateUpdateUserQuizRequest {
-
     private Long quizId;
     private Long quizGroupId;
     private Long correctQuestionId;
-    //private WrongQuestionRequest wrongQuestionRequest;
+    private UserWrongAnswerRequest userWrongAnswerRequest;
 }

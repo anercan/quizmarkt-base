@@ -16,6 +16,7 @@ import java.util.Set;
 public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
 
     List<UserQuiz> findAllByAppIdAndUserIdAndQuizGroupIdIn(int appId, Long userId, Set<Long> quizGroupId);
+    //todo cache this
     Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, Long userId);
     List<UserQuiz> findAllByAppIdAndUserIdOrderByCompleteDate(int appId, Long userId);
 }

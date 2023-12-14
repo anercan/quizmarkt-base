@@ -25,7 +25,7 @@ public class QuizController {
     }
 
     @GetMapping("/get-quiz-with-id/{quizId}")
-    public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(@RequestParam Long quizId) {
-        return quizService.getQuizWithUserQuizDataForStartTest(quizId);
+    public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(@PathVariable String quizId) {
+        return quizService.getQuizWithUserQuizDataForStartTest(Long.parseLong(quizId));
     }
 }

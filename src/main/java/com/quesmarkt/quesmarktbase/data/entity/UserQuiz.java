@@ -23,13 +23,12 @@ public class UserQuiz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
-    private int timeTaken;
     private UserQuizState state;
     private ZonedDateTime completeDate;
     private int appId; // todo dbde check et Longdu
     private Long quizGroupId;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 

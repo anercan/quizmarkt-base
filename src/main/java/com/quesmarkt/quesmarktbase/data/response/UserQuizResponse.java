@@ -14,5 +14,5 @@ import java.util.List;
 public class UserQuizResponse {
     private UserQuizState state;
     private List<Long> correctQuestionList = new ArrayList<>();
-    private int wrongQuestionCount;
+    private List<UserWrongAnswerResponse> wrongQuestionList = new ArrayList<>();
 }

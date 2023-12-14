@@ -2,7 +2,6 @@ package com.quesmarkt.quesmarktbase.service;
 
 import com.quesmarkt.quesmarktbase.data.entity.Quiz;
 import com.quesmarkt.quesmarktbase.data.entity.UserQuiz;
-import com.quesmarkt.quesmarktbase.data.enums.UserQuizState;
 import com.quesmarkt.quesmarktbase.data.mapper.QuizMapper;
 import com.quesmarkt.quesmarktbase.data.mapper.UserQuizMapper;
 import com.quesmarkt.quesmarktbase.data.request.QuizListWithUserDataRequest;
@@ -40,19 +39,16 @@ public class QuizService {
         return ResponseEntity.ok(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 
-    public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) {
-        QuizResponse.QuizResponseBuilder<?, ?> quizResponseBuilder = QuizResponse.builder();
-        Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
-        if (userQuizOptional.isPresent()) {
-            UserQuiz userQuiz = userQuizOptional.get();
-            if (UserQuizState.COMPLETED.equals(userQuiz.getState())) {
-                quizResponseBuilder.userQuiz(userQuizMapper.toUserQuizResponse(userQuiz));
-                return ResponseEntity.ok(quizResponseBuilder.build());
-            } else {
-                quizResponseBuilder.userQuiz(userQuizMapper.toUserQuizResponse(userQuiz));
-            }
-        }
+    public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) { // todo check joins entity graph
         Optional<Quiz> quizWithId = quizManager.getQuizWithId(quizId);
-        return quizWithId.map(quiz -> ResponseEntity.ok(quizMapper.toQuizResponse(quiz))).orElseGet(() -> ResponseEntity.internalServerError().build());
+        QuizResponse quizResponse;
+        if (quizWithId.isPresent()) {
+            quizResponse = quizMapper.toQuizResponse(quizWithId.get());
+        } else {
+            return ResponseEntity.internalServerError().build();
+        }
+        Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
+        userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
+        return ResponseEntity.ok(quizResponse);
     }
 }

@@ -33,7 +33,7 @@ public class Question extends BaseEntity<Long> {
     @Column(name = "param_value", length = 512)
     private Map<String, String> attributes; //subject-xx,yy etc.
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private List<Answers> answersList;
 
