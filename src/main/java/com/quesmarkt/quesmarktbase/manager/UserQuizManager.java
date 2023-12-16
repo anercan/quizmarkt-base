@@ -97,7 +97,6 @@ public class UserQuizManager extends BaseManager {
 
     public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
         try {
-
             boolean isCorrectAnswer = Objects.nonNull(request.getCorrectQuestionId()) && request.getCorrectQuestionId() != 0;
             boolean isWrongAnswer = Objects.nonNull(request.getUserWrongAnswerRequest());
             if (isCorrectAnswer) {
@@ -117,6 +116,4 @@ public class UserQuizManager extends BaseManager {
             return null;
         }
     }
-
-
 }
