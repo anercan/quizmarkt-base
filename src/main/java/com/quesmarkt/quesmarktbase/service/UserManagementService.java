@@ -28,7 +28,7 @@ public class UserManagementService {
             if (StringUtils.isNotEmpty(jwt)) {
                 return ResponseEntity.ok(SignInResponse.builder().jwt(jwt).build());
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.badRequest().build();
             }
         } catch (CallWebServiceException e) {
             return ResponseEntity.internalServerError().build();
