@@ -10,6 +10,7 @@ import com.quesmarkt.quesmarktbase.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class QuizGroupService extends BaseService {
     private final QuizGroupMapper quizGroupMapper;
     private final UserQuizManager userQuizManager;
 
-    public ResponseEntity<QuizGroupResponse> getQuizGroups(QuizGroupRequest request) {
+    public ResponseEntity<QuizGroupResponse> getQuizGroups(@RequestBody QuizGroupRequest request) {
         List<QuizGroup> quizGroupList = quizGroupManager.getQuizGroups(request);
         Map<Long, Integer> userQuizMap = userQuizManager.getUserQuizGroupIdQuizCountMap(quizGroupList.stream().map(QuizGroup::getId).collect(Collectors.toSet()));
         List<QuizGroupWithUserData> quizGroupWithUserDataList = quizGroupList.stream().map(quizGroup -> quizGroupMapper.getQuizGroupWithUserData(userQuizMap, quizGroup)).collect(Collectors.toList());

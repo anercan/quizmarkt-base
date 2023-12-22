@@ -2,6 +2,8 @@ package com.quesmarkt.quesmarktbase.data.response;
 
 import lombok.Data;
 
+import java.util.Map;
+
 /**
  * @author anercan
  */
@@ -16,4 +18,6 @@ public class QuizGroupWithUserData {
     private String imageUrl;
     private int quizQuantity;
     private int userSolvedCount;
+    private Map<String,String> attributes;
+
 }

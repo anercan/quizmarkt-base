@@ -1,7 +1,6 @@
 package com.quesmarkt.quesmarktbase.manager;
 
 import com.quesmarkt.quesmarktbase.aspect.LoggingAspect;
-import com.quesmarkt.quesmarktbase.config.UserContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +12,12 @@ public class BaseManager {
     protected static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
     protected Integer getAppId() {
-        return UserContextHolder.getAppId();
+        return 1;
+        //return UserContextHolder.getAppId();
     }
 
     protected Long getUserId() {
-        return UserContextHolder.getUserId();
+        return 1l;
+        //return UserContextHolder.getUserId();
     }
 }

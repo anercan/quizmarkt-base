@@ -2,7 +2,6 @@ package com.quesmarkt.quesmarktbase.config;
 
 import com.quesmarkt.quesmarktbase.util.JwtUtil;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +9,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import static com.quesmarkt.quesmarktbase.util.JwtUtil.getJwtFromRequest;
 
-@WebFilter
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
