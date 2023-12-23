@@ -21,7 +21,11 @@ public interface QuizMapper {
     default QuizResponseWithUserData getQuizResponseWithUserData(Map<Long, UserQuiz> quizIdUserQuizMap, Quiz quiz) {
         QuizResponseWithUserData quizGroupWithUserData = this.toQuizResponseWithUserData(quiz);
         UserQuiz userQuiz = quizIdUserQuizMap.get(quiz.getId());
-        quizGroupWithUserData.setSolvedCount(getSolvedQuestionDataOfUserQuiz(userQuiz));
+        if (userQuiz != null) {
+            quizGroupWithUserData.setSolvedCount(getSolvedQuestionDataOfUserQuiz(userQuiz));
+        } else {
+            quizGroupWithUserData.setSolvedCount(0);
+        }
         quizGroupWithUserData.setQuestionCount(quiz.getQuestionList().size()); //todo 3 sorgu atıyor kesin count sorgusu yaz
         return quizGroupWithUserData;
     }

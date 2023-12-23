@@ -5,6 +5,7 @@ import com.quesmarkt.quesmarktbase.data.response.QuizGroupWithUserData;
 import org.mapstruct.Mapper;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author anercan
@@ -16,7 +17,8 @@ public interface QuizGroupMapper {
 
     default QuizGroupWithUserData getQuizGroupWithUserData(Map<Long, Integer> userQuizMap, QuizGroup quizGroup) {
         QuizGroupWithUserData quizGroupWithUserData = this.toQuizGroupResponse(quizGroup);
-        quizGroupWithUserData.setUserSolvedCount(userQuizMap.get(quizGroup.getId()));
+        Integer userSolvedCount = userQuizMap.get(quizGroup.getId());
+        quizGroupWithUserData.setUserSolvedCount(Objects.isNull(userSolvedCount) ? 0 : userSolvedCount);
         return quizGroupWithUserData;
     }
 }
