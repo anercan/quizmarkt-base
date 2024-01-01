@@ -29,7 +29,7 @@ public class QuizGroup extends BaseEntity<Long> {
     private int quizQuantity;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "QUIZ_GROUP_ATTRIBUTES", joinColumns = @JoinColumn(name = "quiz_id"))
+    @CollectionTable(name = "QUIZ_GROUP_ATTRIBUTES", joinColumns = @JoinColumn(name = "quiz_group_id"))
     @MapKeyColumn(name = "param_key", length = 64)
     @Column(name = "param_value", length = 512)
     private Map<String, String> attributes;

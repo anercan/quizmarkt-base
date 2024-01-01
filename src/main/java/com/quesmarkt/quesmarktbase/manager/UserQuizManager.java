@@ -31,7 +31,9 @@ public class UserQuizManager extends BaseManager {
     public Map<Long, Integer> getUserQuizGroupIdQuizCountMap(Set<Long> quizGroupIdList) {
         try {
             return getAllByAppIdAndUserIdAndQuizGroupIdIn(quizGroupIdList)
-                    .stream().collect(Collectors.groupingBy(UserQuiz::getQuizGroupId, Collectors.summingInt(e -> 1)));
+                    .stream()
+                    .filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState()))
+                    .collect(Collectors.groupingBy(UserQuiz::getQuizGroupId, Collectors.summingInt(e -> 1)));
         } catch (Exception e) {
             logger.error("getUserQuizIdCountMap got exception.userId:{},quizGroupId:{}", getUserId(), quizGroupIdList, e);
             return Collections.emptyMap();
