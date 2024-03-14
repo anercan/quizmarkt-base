@@ -31,14 +31,10 @@ public class UserQuizService {
     private final UserQuizMapper userQuizMapper;
 
     public ResponseEntity<UserQuizListResponse> getUserQuizList() {
-        try {
-            List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
-            return ResponseEntity.ok(UserQuizListResponse.builder()
-                            .userQuizResponseList(userQuizMapper.toUserQuizListResponse(userQuizList))
+        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+        return ResponseEntity.ok(UserQuizListResponse.builder()
+                .userQuizResponseList(userQuizMapper.toUserQuizListResponse(userQuizList))
                             .build());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
     }
 
     public ResponseEntity<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {

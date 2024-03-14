@@ -6,7 +6,6 @@ import com.quesmarkt.quesmarktbase.data.enums.UserQuizState;
 import com.quesmarkt.quesmarktbase.data.mapper.UserQuizMapper;
 import com.quesmarkt.quesmarktbase.data.repository.UserQuizRepository;
 import com.quesmarkt.quesmarktbase.data.request.CreateUpdateUserQuizRequest;
-import com.quesmarkt.quesmarktbase.manager.exception.DataAccessException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +72,7 @@ public class UserQuizManager extends BaseManager {
             return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
         } catch (Exception e) {
             logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
-            throw new DataAccessException(e);
+            return Collections.emptyList();
         }
     }
 

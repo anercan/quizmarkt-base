@@ -41,12 +41,10 @@ public class QuizService {
 
     public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) { // todo check joins entity graph
         Optional<Quiz> quizWithId = quizManager.getQuizWithId(quizId);
-        QuizResponse quizResponse;
-        if (quizWithId.isPresent()) {
-            quizResponse = quizMapper.toQuizResponse(quizWithId.get());
-        } else {
+        if (quizWithId.isEmpty()) {
             return ResponseEntity.internalServerError().build();
         }
+        QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());;
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
         userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
         return ResponseEntity.ok(quizResponse);
