@@ -22,7 +22,7 @@ public class QuizManager extends BaseManager {
 
     private final QuizRepository quizRepository;
 
-    public List<Quiz> getQuizListWithGroupId(QuizListWithUserDataRequest request) {
+    public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) {
         try {
             QuizGroup quizGroup = new QuizGroup();
             quizGroup.setId(request.getQuizGroupId());
@@ -39,6 +39,15 @@ public class QuizManager extends BaseManager {
         } catch (Exception e) {
             logger.error("getWithId got exception.userId:{}", getUserId(), e);
             return Optional.empty();
+        }
+    }
+
+    public List<Quiz> getQuizList(com.quesmarkt.quesmarktbase.data.request.PageRequest request) {
+        try {
+            return quizRepository.findAllBy(PageRequest.of(request.getPage(), request.getPageSize()));
+        } catch (Exception e) {
+            logger.error("getQuizList got exception.userId:{},groupId:{}", getUserId(), e);
+            return Collections.emptyList();
         }
     }
 }

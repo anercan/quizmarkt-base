@@ -23,6 +23,6 @@ public class QuizGroupController {
 
     @PostMapping("/get-quiz-groups-with-user-quiz-data")
     public ResponseEntity<QuizGroupResponse> getQuizGroupsWithUserData(@RequestBody QuizGroupRequest request) {
-        return quizGroupService.getQuizGroups(request);
+        return quizGroupService.getQuizGroupsWithUserInfo(request);
     }
 }

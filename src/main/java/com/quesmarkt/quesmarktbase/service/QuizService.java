@@ -4,6 +4,7 @@ import com.quesmarkt.quesmarktbase.data.entity.Quiz;
 import com.quesmarkt.quesmarktbase.data.entity.UserQuiz;
 import com.quesmarkt.quesmarktbase.data.mapper.QuizMapper;
 import com.quesmarkt.quesmarktbase.data.mapper.UserQuizMapper;
+import com.quesmarkt.quesmarktbase.data.request.PageRequest;
 import com.quesmarkt.quesmarktbase.data.request.QuizListWithUserDataRequest;
 import com.quesmarkt.quesmarktbase.data.response.QuizListResponse;
 import com.quesmarkt.quesmarktbase.data.response.QuizResponse;
@@ -33,7 +34,7 @@ public class QuizService {
     private final UserQuizMapper userQuizMapper;
 
     public ResponseEntity<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
-        List<Quiz> quizList = quizManager.getQuizListWithGroupId(request);
+        List<Quiz> quizList = quizManager.getActiveQuizListWithGroupId(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
         List<QuizResponseWithUserData> quizWithUserDataList = quizList.stream().map(quiz -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, quiz)).collect(Collectors.toList());
         return ResponseEntity.ok(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
@@ -48,5 +49,11 @@ public class QuizService {
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
         userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
         return ResponseEntity.ok(quizResponse);
+    }
+
+    public ResponseEntity<List<Quiz>> getQuizList(PageRequest request) {
+        List<Quiz> quizList = quizManager.getQuizList(request);
+
+        return ResponseEntity.ok(quizList);
     }
 }
