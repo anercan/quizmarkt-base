@@ -21,11 +21,11 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
+    //todo role based
 
     private final QuizService quizService;
     private final QuizGroupService quizGroupService;
     private final QuestionService questionService;
-
 
     @PostMapping("/get-quiz-groups")
     public ResponseEntity<List<QuizGroup>> getQuizGroupList(@RequestBody PageRequest request) {

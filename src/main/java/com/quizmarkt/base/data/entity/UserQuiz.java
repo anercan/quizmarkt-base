@@ -22,7 +22,7 @@ public class UserQuiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+    private String userId;
     private UserQuizState state;
     private ZonedDateTime completeDate;
     private int appId; // todo dbde check et Longdu

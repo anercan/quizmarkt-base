@@ -1,7 +1,9 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
+import com.quizmarkt.base.data.entity.UserWrongAnswer;
 import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.repository.UserQuizRepository;
@@ -75,6 +77,15 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
+    public int getUserQuizCount(UserQuizState userQuizState) {
+        try {
+            return userQuizRepository.countByAppIdAndUserIdAndState(getAppId(), getUserId(),userQuizState);
+        } catch (Exception e) {
+            logger.error("getUserQuizCount got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
+            return 0;
+        }
+    }
+
     public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request) {
         try {
             UserQuiz userQuiz = new UserQuiz();
@@ -97,6 +108,10 @@ public class UserQuizManager extends BaseManager {
 
     public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
         try {
+            if (isUpdatedBefore(request, userQuiz)) {
+                logger.warn("This question answered before.request:{}", request);
+                return null;
+            }
             boolean isCorrectAnswer = Objects.nonNull(request.getCorrectQuestionId()) && request.getCorrectQuestionId() != 0;
             boolean isWrongAnswer = Objects.nonNull(request.getUserWrongAnswerRequest());
             if (isCorrectAnswer) {
@@ -115,5 +130,14 @@ public class UserQuizManager extends BaseManager {
             logger.error("updateUserQuiz got exception.userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId(), e);
             return null;
         }
+    }
+
+    private boolean isUpdatedBefore(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
+        List<Long> wrongQuestionIdSet = userQuiz.getWrongQuestionList().stream().map(UserWrongAnswer::getQuestion).map(Question::getId).collect(Collectors.toList());
+        List<Long> correctQuestionIdSet = userQuiz.getCorrectQuestionList();
+        List<Long> combinedQuestionIdSet = new ArrayList<>(wrongQuestionIdSet); // Initialize with wrong questions
+        combinedQuestionIdSet.addAll(correctQuestionIdSet);
+        Long selectedQuestionId = request.getUserWrongAnswerRequest() != null ? request.getUserWrongAnswerRequest().getQuestionId() : request.getCorrectQuestionId();
+        return combinedQuestionIdSet.contains(selectedQuestionId);
     }
 }

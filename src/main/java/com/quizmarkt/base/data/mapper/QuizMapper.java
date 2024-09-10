@@ -33,6 +33,7 @@ public interface QuizMapper {
         UserQuiz userQuiz = quizIdUserQuizMap.get(quiz.getId());
         if (userQuiz != null) {
             quizGroupWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
+            quizGroupWithUserData.setState(userQuiz.getState());
         } else {
             quizGroupWithUserData.setSolvedCount(0);
         }

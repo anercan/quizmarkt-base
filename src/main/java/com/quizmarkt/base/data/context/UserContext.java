@@ -1,4 +1,4 @@
-package com.quizmarkt.base.config;
+package com.quizmarkt.base.data.context;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserContext {
-    private Long userId;
+    private String userId;
     private int appId;
 }

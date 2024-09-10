@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 public class UserQuizInListResponse {
     private Long id;
-    private Long userId;
     private int timeTaken;
     private UserQuizState state;
     private ZonedDateTime completeDate;

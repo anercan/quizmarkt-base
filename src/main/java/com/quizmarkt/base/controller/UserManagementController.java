@@ -1,9 +1,8 @@
 package com.quizmarkt.base.controller;
 
+import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
-import com.quizmarkt.base.data.request.SignUpRequest;
 import com.quizmarkt.base.data.response.SignInResponse;
-import com.quizmarkt.base.data.response.SignUpResponse;
 import com.quizmarkt.base.service.UserManagementService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,9 @@ public class UserManagementController {
         return userManagementService.signInWithMail(signInRequest);
     }
 
-    public ResponseEntity<SignUpResponse> signUpWithMail(@RequestBody SignUpRequest signUpRequest) {
-        return null;
+    @PostMapping("/google-sign-in")
+    public ResponseEntity<SignInResponse> signInWithMail(@RequestBody GoogleLoginRequest request) {
+        return userManagementService.signInWithGoogle(request);
     }
+
 }

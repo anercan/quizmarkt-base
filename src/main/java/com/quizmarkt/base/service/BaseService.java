@@ -1,6 +1,6 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.config.UserContextHolder;
+import com.quizmarkt.base.data.context.UserContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,12 @@ public class BaseService {
         return UserContextHolder.getAppId();
     }
 
-    protected Long getUserId() {
+    protected String getUserId() {
         return UserContextHolder.getUserId();
     }
+
+    protected boolean isPremiumUser() {
+        return false;
+    }
+
 }

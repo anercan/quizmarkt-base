@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = "com.quesmarkt.quesmarktbase")
+@EnableJpaRepositories(basePackages = "com.quizmarkt.base")
 @SpringBootApplication
-public class QuesmarktBaseApplication {
+public class QuizMarktBaseApplication {
     public static void main(String[] args) {
-        SpringApplication.run(QuesmarktBaseApplication.class, args);
+        SpringApplication.run(QuizMarktBaseApplication.class, args);
     }
 }

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,9 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 public class JwtUtil {
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
-    private static final String USERNAME = "username";
-    private static final String USER_ID = "user-id";
-    private static final String APP_ID = "app-id";
+    public static final String USER_ID = "user-id";
+    public static final String APP_ID = "app-id";
     private static final String JWT_SECRET = System.getProperty("JWT_SECRET");
 
     public static boolean checkJWT(String jwt) {
@@ -40,27 +40,11 @@ public class JwtUtil {
         return StringUtils.isEmpty(JWT_SECRET) ? "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N" : JWT_SECRET;
     }
 
-    public static Long getUserId(String jwt) {
+    public static Claims getClaims(String jwt) {
         try {
-            String userId = getClaimWithKey(jwt, USER_ID);
-            if (StringUtils.isNotEmpty(userId)) {
-                return Long.parseLong(userId);
-            }
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /*public static String getAppId(String jwt) {
-        return getClaimWithKey(jwt, APP_ID);
-    }*/
-
-    private static String getClaimWithKey(String jwt, String key) {
-        try {
-            return (String) Jwts.parserBuilder()
+            return Jwts.parserBuilder()
                     .setSigningKey(getKey())
-                    .build().parseClaimsJws(jwt).getBody().get(key);
+                    .build().parseClaimsJws(jwt).getBody();
         } catch (Exception e) {
             return null;
         }

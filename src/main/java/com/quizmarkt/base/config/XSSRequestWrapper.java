@@ -9,6 +9,7 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     public XSSRequestWrapper(HttpServletRequest servletRequest) {
         super(servletRequest);
+        //todo
     }
 
     @Override
@@ -39,9 +40,6 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
     private String stripXSS(String value) {
         if (value != null) {
             //value = ESAPI.encoder().canonicalize(value);
-
-            // Avoid null characters
-            value = value.replaceAll("", "");
 
             // Avoid anything between script tags
             Pattern scriptPattern = Pattern.compile("<script>(.*?)</script>", Pattern.CASE_INSENSITIVE);

@@ -19,5 +19,6 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     List<Quiz> findAllBy(Pageable pageable);
     List<Quiz> findAllByQuizGroupListContaining(QuizGroup quizGroup,Pageable pageable);
     int countAllByQuizGroupListContainingAndActive(QuizGroup quizGroupList, boolean active);
+    int countAllByActiveAndAppId(boolean active,int appId);
 
 }

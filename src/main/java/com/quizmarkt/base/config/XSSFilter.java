@@ -1,12 +1,10 @@
 package com.quizmarkt.base.config;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.IOException;
 
-@WebFilter
 public class XSSFilter implements Filter {
 
     @Override

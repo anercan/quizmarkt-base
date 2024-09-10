@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.response;
 
+import com.quizmarkt.base.data.enums.UserQuizState;
 import lombok.Data;
 
 import java.util.Map;
@@ -16,5 +17,6 @@ public class QuizResponseWithUserData {
     private Map<String, String> attributes;
     int solvedCount;
     int questionCount;
+    private UserQuizState state;
 
 }

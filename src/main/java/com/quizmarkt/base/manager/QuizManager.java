@@ -78,4 +78,13 @@ public class QuizManager extends BaseManager {
             logger.error("saveQuizGroup got exception request:{}", quiz, e);
         }
     }
+
+    public int getActiveQuizCount() {
+        try {
+            return quizRepository.countAllByActiveAndAppId(true,getAppId());
+        } catch (Exception e) {
+            logger.error("getActiveQuizCount got exception", e);
+            return 0;
+        }
+    }
 }

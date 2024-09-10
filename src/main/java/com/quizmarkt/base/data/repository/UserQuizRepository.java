@@ -1,6 +1,7 @@
 package com.quizmarkt.base.data.repository;
 
 import com.quizmarkt.base.data.entity.UserQuiz;
+import com.quizmarkt.base.data.enums.UserQuizState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,8 +16,9 @@ import java.util.Set;
 @Repository
 public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
 
-    List<UserQuiz> findAllByAppIdAndUserIdAndQuizGroupIdIn(int appId, Long userId, Set<Long> quizGroupId);
+    List<UserQuiz> findAllByAppIdAndUserIdAndQuizGroupIdIn(int appId, String userId, Set<Long> quizGroupId);
     //todo cache this
-    Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, Long userId);
-    List<UserQuiz> findAllByAppIdAndUserIdOrderByCompleteDate(int appId, Long userId);
+    Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, String userId);
+    List<UserQuiz> findAllByAppIdAndUserIdOrderByCompleteDate(int appId, String userId);
+    int countByAppIdAndUserIdAndState(int appId, String userId, UserQuizState state);
 }
