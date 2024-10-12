@@ -18,5 +18,6 @@ public class QuizResponseWithUserData {
     int solvedCount;
     int questionCount;
     private UserQuizState state;
+    private boolean isLocked;
 
 }

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.request;
 
+import com.quizmarkt.base.data.enums.PremiumType;
 import lombok.Data;
 
 import java.util.List;
@@ -16,4 +17,5 @@ public class CreateOrUpdateQuiz {
     private int priority;
     private boolean active;
     private List<Long> quizGroupIds;
+    private List<PremiumType> availablePremiumTypes;
 }

@@ -1,7 +1,9 @@
 package com.quizmarkt.base.manager;
 
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
+import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
+import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.data.response.UserManagementSignInResponse;
 import com.quizmarkt.base.manager.exception.CallWebServiceException;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +52,22 @@ public class UserManagementManager extends BaseManager {
             }
         } catch (Exception e) {
             logger.error("callBasicSignInService failed for token:{} with cause:", googleLoginRequest.getToken(), e);
+            throw new CallWebServiceException(e);
+        }
+    }
+
+    public UpdatePremiumInfoResponse setPremiumInfo(PremiumInfoRequest premiumInfoRequest) {
+        try {
+            String endpoint = userManagementServiceEndpoint + "/user-management/user-info/update-premium-info";
+            ResponseEntity<UpdatePremiumInfoResponse> updatePremiumInfoResponse = userManagementRestTemplate.postForEntity(endpoint, premiumInfoRequest, UpdatePremiumInfoResponse.class);
+            if (updatePremiumInfoResponse.getStatusCode().is2xxSuccessful() && updatePremiumInfoResponse.getBody() != null) {
+                return updatePremiumInfoResponse.getBody();
+            } else {
+                logger.warn("setPremiumInfo has not succeed.");
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("setPremiumInfo failed for with cause:", e);
             throw new CallWebServiceException(e);
         }
     }

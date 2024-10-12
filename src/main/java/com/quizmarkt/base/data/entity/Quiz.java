@@ -1,5 +1,7 @@
 package com.quizmarkt.base.data.entity;
 
+import com.quizmarkt.base.data.converter.PremiumTypeListConverter;
+import com.quizmarkt.base.data.enums.PremiumType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +41,9 @@ public class Quiz extends BaseEntity<Long> {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "QUIZ_GROUP_QUIZZES", joinColumns = @JoinColumn(name = "quiz_id"), inverseJoinColumns = @JoinColumn(name = "quiz_group_id"))
     private List<QuizGroup> quizGroupList;
+
+    @Convert(converter = PremiumTypeListConverter.class)
+    private List<PremiumType> availablePremiumTypes;
 
     @Override
     public String toString() {

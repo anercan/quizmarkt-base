@@ -32,4 +32,9 @@ public class UserManagementController {
         return userManagementService.signInWithGoogle(request);
     }
 
+    @PostMapping("/update-premium-info")
+    public ResponseEntity<String> updatePremiumInfo() {
+        return userManagementService.updatePremiumInfo();
+    }
+
 }

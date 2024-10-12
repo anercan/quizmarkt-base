@@ -1,6 +1,7 @@
 package com.quizmarkt.base.service;
 
 import com.quizmarkt.base.data.context.UserContextHolder;
+import com.quizmarkt.base.data.enums.PremiumType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +20,12 @@ public class BaseService {
         return UserContextHolder.getUserId();
     }
 
-    protected boolean isPremiumUser() {
-        return false;
+    protected boolean isRegularPremium() {
+        return PremiumType.REGULAR_MONTHLY_PREMIUM.equals(UserContextHolder.getPremiumType());
+    }
+
+    protected PremiumType getPremiumType() {
+        return UserContextHolder.getPremiumType();
     }
 
 }

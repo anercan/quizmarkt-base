@@ -25,13 +25,14 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class UserQuizService {
+public class UserQuizService extends BaseService {
 
     private final UserQuizManager userQuizManager;
     private final UserQuizMapper userQuizMapper;
 
     public ResponseEntity<UserQuizListResponse> getUserQuizList() {
         List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+        //todo check premium and lock
         return ResponseEntity.ok(UserQuizListResponse.builder()
                 .userQuizResponseList(userQuizMapper.toUserQuizListResponse(userQuizList))
                             .build());

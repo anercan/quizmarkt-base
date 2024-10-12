@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class JwtUtil {
     private static final SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
     public static final String USER_ID = "user-id";
+    public static final String PREMIUM_TYPE = "premium-type";
     public static final String APP_ID = "app-id";
     private static final String JWT_SECRET = System.getProperty("JWT_SECRET");
 

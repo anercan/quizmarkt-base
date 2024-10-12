@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class QuizService {
+public class QuizService extends BaseService {
 
     private final QuizManager quizManager;
     private final UserQuizManager userQuizManager;
@@ -39,7 +39,7 @@ public class QuizService {
     public ResponseEntity<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
         List<Quiz> quizList = quizManager.getActiveQuizListWithGroupId(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
-        List<QuizResponseWithUserData> quizWithUserDataList = quizList.stream().map(quiz -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, quiz)).collect(Collectors.toList());
+        List<QuizResponseWithUserData> quizWithUserDataList = quizList.stream().map(quiz -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, quiz, getPremiumType())).collect(Collectors.toList());
         return ResponseEntity.ok(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 
@@ -47,6 +47,10 @@ public class QuizService {
         Optional<Quiz> quizWithId = quizManager.getQuizWithId(quizId);
         if (quizWithId.isEmpty()) {
             return ResponseEntity.internalServerError().build();
+        }
+        if (!quizWithId.get().getAvailablePremiumTypes().contains(getPremiumType())) {
+            logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
+            return ResponseEntity.badRequest().build();
         }
         QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);

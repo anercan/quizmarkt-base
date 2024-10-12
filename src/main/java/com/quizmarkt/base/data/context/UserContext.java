@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.context;
 
+import com.quizmarkt.base.data.enums.PremiumType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,4 +15,5 @@ import lombok.Setter;
 public class UserContext {
     private String userId;
     private int appId;
+    private PremiumType premiumType;
 }

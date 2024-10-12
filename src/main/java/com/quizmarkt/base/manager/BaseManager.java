@@ -2,6 +2,7 @@ package com.quizmarkt.base.manager;
 
 import com.quizmarkt.base.aspect.LoggingAspect;
 import com.quizmarkt.base.data.context.UserContextHolder;
+import com.quizmarkt.base.data.enums.PremiumType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,9 @@ public class BaseManager {
 
     protected Integer getAppId() {
         return UserContextHolder.getAppId();
+    }
+    protected boolean isRegularPremium() {
+        return PremiumType.REGULAR_MONTHLY_PREMIUM.equals(UserContextHolder.getPremiumType());
     }
 
     protected String getUserId() {

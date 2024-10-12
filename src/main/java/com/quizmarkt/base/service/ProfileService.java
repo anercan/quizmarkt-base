@@ -20,7 +20,7 @@ public class ProfileService extends BaseService {
     private final QuizManager quizManager;
 
     public ResponseEntity<UserDataResponse> getUserData() {
-        if (isPremiumUser()) {
+        if (isRegularPremium()) {
             //todo
         } else {
             UserDataResponse build = UserDataResponse.builder()

@@ -1,14 +1,19 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
+import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.SignInResponse;
+import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.manager.UserManagementManager;
 import com.quizmarkt.base.manager.exception.CallWebServiceException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.ZonedDateTime;
 
 /**
  * @author anercan
@@ -51,5 +56,15 @@ public class UserManagementService extends BaseService {
         request.setAppId(appId);
         request.setToken(token);
         return request;
+    }
+
+    public ResponseEntity<String> updatePremiumInfo() {
+        PremiumInfoRequest premiumInfoRequest = new PremiumInfoRequest();
+        premiumInfoRequest.setPremiumType(PremiumType.REGULAR_MONTHLY_PREMIUM);
+        premiumInfoRequest.setExpireDate(ZonedDateTime.now().plusDays(31L));
+        premiumInfoRequest.setUserId(getUserId());
+        premiumInfoRequest.setJwtExpireDate(31L);
+        UpdatePremiumInfoResponse updatePremiumInfoResponse = userManagementManager.setPremiumInfo(premiumInfoRequest);
+        return ResponseEntity.ok(updatePremiumInfoResponse.getJwt());
     }
 }
