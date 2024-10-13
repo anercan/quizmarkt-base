@@ -4,9 +4,6 @@ import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
-import com.quizmarkt.base.data.repository.QuizRepository;
-import com.quizmarkt.base.data.request.CreateOrUpdateQuiz;
-import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
 import com.quizmarkt.base.data.response.QuizListResponse;
 import com.quizmarkt.base.data.response.QuizResponse;
@@ -34,7 +31,6 @@ public class QuizService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final QuizMapper quizMapper;
     private final UserQuizMapper userQuizMapper;
-    private final QuizRepository quizRepository;
 
     public ResponseEntity<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
         List<Quiz> quizList = quizManager.getActiveQuizListWithGroupId(request);
@@ -56,16 +52,5 @@ public class QuizService extends BaseService {
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
         userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
         return ResponseEntity.ok(quizResponse);
-    }
-
-    public ResponseEntity<List<Quiz>> getQuizListWithGroupIfExist(QuizListWithGroupIdRequest request) {
-        return ResponseEntity.ok(quizManager.getQuizListWithGroupIdIfExist(request));
-    }
-
-    public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
-        Optional<Quiz> optionalQuiz = request.getId() != null ? quizRepository.findById(request.getId()) : Optional.empty();
-        Optional<Quiz> quiz = quizMapper.toQuizEntity(request, optionalQuiz);
-        quiz.ifPresent(quizManager::saveQuizWithUpdateQuizGroup);
-        return ResponseEntity.ok().build();
     }
 }

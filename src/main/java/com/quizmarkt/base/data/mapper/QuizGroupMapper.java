@@ -2,7 +2,7 @@ package com.quizmarkt.base.data.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizmarkt.base.data.entity.QuizGroup;
-import com.quizmarkt.base.data.request.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import com.quizmarkt.base.data.response.QuizGroupWithUserData;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -30,7 +30,7 @@ public interface QuizGroupMapper {
         try {
             QuizGroup quizGroup = optionalQuizGroup.orElseGet(QuizGroup::new);
             quizGroup.setActive(request.isActive());
-            quizGroup.setAppId(1);
+            quizGroup.setAppId(request.getAppId());
             quizGroup.setDescription(request.getDescription());
             quizGroup.setTitle(request.getTitle());
             quizGroup.setPriority(request.getPriority());

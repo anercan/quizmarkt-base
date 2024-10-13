@@ -5,7 +5,7 @@ import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.enums.PremiumType;
-import com.quizmarkt.base.data.request.CreateOrUpdateQuiz;
+import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.data.response.QuizResponseWithUserData;
 import com.quizmarkt.base.util.UserQuizUtil;
@@ -49,7 +49,7 @@ public interface QuizMapper {
             Quiz quiz = optionalQuiz.orElseGet(Quiz::new);
             quiz.setActive(request.isActive());
             quiz.setName(request.getName());
-            quiz.setAppId(1);
+            quiz.setAppId(request.getAppId());
             quiz.setPriority(request.getPriority());
             quiz.setAvailablePremiumTypes(request.getAvailablePremiumTypes());
             if (StringUtils.isNotEmpty(request.getAttributes())) {

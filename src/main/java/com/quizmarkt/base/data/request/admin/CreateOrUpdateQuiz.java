@@ -1,4 +1,4 @@
-package com.quizmarkt.base.data.request;
+package com.quizmarkt.base.data.request.admin;
 
 import com.quizmarkt.base.data.enums.PremiumType;
 import lombok.Data;
@@ -18,4 +18,5 @@ public class CreateOrUpdateQuiz {
     private boolean active;
     private List<Long> quizGroupIds;
     private List<PremiumType> availablePremiumTypes;
+    int appId = 1;
 }

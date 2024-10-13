@@ -1,4 +1,4 @@
-package com.quizmarkt.base.data.request;
+package com.quizmarkt.base.data.request.admin;
 
 import lombok.Data;
 

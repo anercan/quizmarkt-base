@@ -1,4 +1,4 @@
-package com.quizmarkt.base.data.request;
+package com.quizmarkt.base.data.request.admin;
 
 import lombok.Data;
 
@@ -15,4 +15,5 @@ public class CreateOrUpdateQuizGroup {
     private String color;
     private int priority;
     private boolean active;
+    private int appId = 1;
 }
