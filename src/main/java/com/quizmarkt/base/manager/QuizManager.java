@@ -2,7 +2,6 @@ package com.quizmarkt.base.manager;
 
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
-import com.quizmarkt.base.data.repository.QuizGroupRepository;
 import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,6 @@ import java.util.Optional;
 public class QuizManager extends BaseManager {
 
     private final QuizRepository quizRepository;
-    private final QuizGroupRepository quizGroupRepository;
 
     public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) {
         try {

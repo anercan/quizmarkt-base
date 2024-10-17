@@ -9,10 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author anercan
@@ -35,6 +32,7 @@ public interface QuestionMapper {
             }
             if (!CollectionUtils.isEmpty(request.getCreateOrUpdateAnswerList())) {
                 List<Answer> answerList = new ArrayList<>();
+                Collections.shuffle(request.getCreateOrUpdateAnswerList());
                 for (CreateOrUpdateAnswer answerReq:request.getCreateOrUpdateAnswerList()) {
                     Answer answer = new Answer();
                     if (answerReq.getId() != null) {

@@ -17,7 +17,7 @@ public class BaseManager {
         return UserContextHolder.getAppId();
     }
     protected boolean isRegularPremium() {
-        return PremiumType.REGULAR_MONTHLY_PREMIUM.equals(UserContextHolder.getPremiumType());
+        return !PremiumType.NONE.equals(UserContextHolder.getPremiumType());
     }
 
     protected String getUserId() {

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.aspect;
 
+import com.quizmarkt.base.data.context.UserContextHolder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,7 +38,7 @@ public class LoggingAspect {
             response = "ResponseBody:" + (Objects.nonNull(body) ? body : null) + " ResponseCode:" + ((ResponseEntity<?>) proceed).getStatusCode();
         }
         String request = Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).reduce("", String::concat);
-        logger.info("RequestBody: {} to {} finished in {} ms with ResponseBody: {}", request, methodName, elapsedTime, response);
+        logger.info("RequestBody: {} to {} finished in {} ms with ResponseBody: {} userId:{}", request, methodName, elapsedTime, response,UserContextHolder.getUserId());
         return proceed;
     }
 }

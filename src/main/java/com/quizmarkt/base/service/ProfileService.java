@@ -21,7 +21,13 @@ public class ProfileService extends BaseService {
 
     public ResponseEntity<UserDataResponse> getUserData() {
         if (isRegularPremium()) {
-            //todo
+            UserDataResponse build = UserDataResponse.builder()
+                    .totalQuizCount(quizManager.getActiveQuizCount())
+                    .userSolvedQuizCount(userQuizManager.getUserQuizCount(UserQuizState.COMPLETED))
+                    .userOngoingQuizCount(userQuizManager.getUserQuizCount(UserQuizState.ON_GOING))
+                    .avatarUrl("https://lh3.googleusercontent.com/a/ACg8ocKd5hcKqsKsk1ol2I6auAMVewmw0AJzy16BMZQti4UIvE_a1g=s96-c") //todo
+                    .build();
+            return ResponseEntity.ok(build);
         } else {
             UserDataResponse build = UserDataResponse.builder()
                     .totalQuizCount(quizManager.getActiveQuizCount())
@@ -31,6 +37,5 @@ public class ProfileService extends BaseService {
                     .build();
             return ResponseEntity.ok(build);
         }
-        return ResponseEntity.badRequest().build();
     }
 }

@@ -21,7 +21,7 @@ public class BaseService {
     }
 
     protected boolean isRegularPremium() {
-        return PremiumType.REGULAR_MONTHLY_PREMIUM.equals(UserContextHolder.getPremiumType());
+        return !PremiumType.NONE.equals(UserContextHolder.getPremiumType());
     }
 
     protected PremiumType getPremiumType() {

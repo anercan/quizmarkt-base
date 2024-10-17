@@ -11,6 +11,7 @@ import com.quizmarkt.base.data.response.QuizResponseWithUserData;
 import com.quizmarkt.base.manager.QuizManager;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public class QuizService extends BaseService {
         }
         if (!quizWithId.get().getAvailablePremiumTypes().contains(getPremiumType())) {
             logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);

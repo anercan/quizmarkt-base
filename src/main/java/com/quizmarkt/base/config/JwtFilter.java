@@ -47,7 +47,7 @@ public class JwtFilter implements Filter {
     }
 
     private boolean canSkipFilter(String path) {
-        return path.contains("google-sign-in") || path.contains("start-app") || path.contains("/admin");
+        return path.contains("google-sign-in") || path.contains("start-app") || path.contains("/admin") || path.contains("swagger") || path.contains("api-docs");
     }
 
     @Override

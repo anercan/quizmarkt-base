@@ -60,7 +60,7 @@ public class UserManagementService extends BaseService {
 
     public ResponseEntity<String> updatePremiumInfo() {
         PremiumInfoRequest premiumInfoRequest = new PremiumInfoRequest();
-        premiumInfoRequest.setPremiumType(PremiumType.REGULAR_MONTHLY_PREMIUM);
+        premiumInfoRequest.setPremiumType(PremiumType.LEVEL1);
         premiumInfoRequest.setExpireDate(ZonedDateTime.now().plusDays(31L));
         premiumInfoRequest.setUserId(getUserId());
         premiumInfoRequest.setJwtExpireDate(31L);
