@@ -20,5 +20,5 @@ public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
     //todo cache this
     Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, String userId);
     List<UserQuiz> findAllByAppIdAndUserIdOrderByCompleteDate(int appId, String userId);
-    int countByAppIdAndUserIdAndState(int appId, String userId, UserQuizState state);
+    long countByAppIdAndUserIdAndState(int appId, String userId, UserQuizState state);
 }

@@ -47,7 +47,7 @@ public class QuizService extends BaseService {
         }
         if (!quizWithId.get().getAvailablePremiumTypes().contains(getPremiumType())) {
             logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);

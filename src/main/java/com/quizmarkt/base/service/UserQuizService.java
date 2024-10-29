@@ -31,7 +31,7 @@ public class UserQuizService extends BaseService {
     private final UserQuizMapper userQuizMapper;
 
     public ResponseEntity<UserQuizListResponse> getUserQuizList() {
-        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+        List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();
         //todo check premium and lock
         return ResponseEntity.ok(UserQuizListResponse.builder()
                 .userQuizResponseList(userQuizMapper.toUserQuizListResponse(userQuizList))

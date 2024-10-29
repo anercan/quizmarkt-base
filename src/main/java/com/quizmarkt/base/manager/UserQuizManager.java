@@ -68,6 +68,15 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
+    public List<UserQuiz> getOrderedUserQuizList() {
+        try {
+            return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
+        } catch (Exception e) {
+            logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
+            return Collections.emptyList();
+        }
+    }
+
     public List<UserQuiz> getUserQuizList() {
         try {
             return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
@@ -77,7 +86,7 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    public int getUserQuizCount(UserQuizState userQuizState) {
+    public long getUserQuizCount(UserQuizState userQuizState) {
         try {
             return userQuizRepository.countByAppIdAndUserIdAndState(getAppId(), getUserId(),userQuizState);
         } catch (Exception e) {
