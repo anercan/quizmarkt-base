@@ -21,7 +21,7 @@ public interface UserQuizMapper {
 
     UserQuizResponse toUserQuizResponse(UserQuiz userQuiz);
 
-    List<UserQuizInListResponse> toUserQuizListResponse(List<UserQuiz> userQuiz);
+    UserQuizInListResponse toUserQuizListResponse(UserQuiz userQuiz);
 
     List<UserWrongAnswerResponse> toListUserWrongAnswerResponse(List<UserWrongAnswer> userWrongAnswerList);
 

@@ -17,6 +17,7 @@ public class UserQuizInListResponse {
     private UserQuizState state;
     private ZonedDateTime completeDate;
     private Long quizGroupId;
+    private String quizGroupName;
     private QuizLightResponse quiz;
     private List<Long> correctQuestionList;
     private List<UserWrongAnswerResponse> wrongQuestionList;

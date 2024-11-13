@@ -70,7 +70,7 @@ public class UserQuizManager extends BaseManager {
 
     public List<UserQuiz> getOrderedUserQuizList() {
         try {
-            return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
+            return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDateDesc(getAppId(), getUserId());
         } catch (Exception e) {
             logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
             return Collections.emptyList();
@@ -79,7 +79,7 @@ public class UserQuizManager extends BaseManager {
 
     public List<UserQuiz> getUserQuizList() {
         try {
-            return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDate(getAppId(), getUserId());
+            return userQuizRepository.findAllByAppIdAndUserId(getAppId(), getUserId());
         } catch (Exception e) {
             logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
             return Collections.emptyList();

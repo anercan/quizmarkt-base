@@ -1,5 +1,6 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
@@ -7,6 +8,7 @@ import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.data.request.ReviewWrongQuestionsRequest;
 import com.quizmarkt.base.data.response.BooleanResponse;
 import com.quizmarkt.base.data.response.ReviewWrongQuestionListResponse;
+import com.quizmarkt.base.data.response.UserQuizInListResponse;
 import com.quizmarkt.base.data.response.UserQuizListResponse;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
@@ -31,11 +33,25 @@ public class UserQuizService extends BaseService {
     private final UserQuizMapper userQuizMapper;
 
     public ResponseEntity<UserQuizListResponse> getUserQuizList() {
+        List<UserQuizInListResponse> userQuizInListResponses = new ArrayList<>();
         List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();
-        //todo check premium and lock
+        for (UserQuiz userQuiz:userQuizList) {
+            UserQuizInListResponse userQuizInListResponse = userQuizMapper.toUserQuizListResponse(userQuiz);
+            Long quizGroupId = userQuizInListResponse.getQuizGroupId();
+            userQuizInListResponse.setQuizGroupName(getQuizGroupNameFromUserQuiz(userQuiz, quizGroupId));
+            userQuizInListResponses.add(userQuizInListResponse);
+        }
         return ResponseEntity.ok(UserQuizListResponse.builder()
-                .userQuizResponseList(userQuizMapper.toUserQuizListResponse(userQuizList))
+                .userQuizResponseList(userQuizInListResponses)
                             .build());
+    }
+
+    private String getQuizGroupNameFromUserQuiz(UserQuiz userQuiz, Long quizGroupId) {
+        return userQuiz.getQuiz().getQuizGroupList()
+                .stream()
+                .filter(quizGroup -> quizGroup.getId().equals(quizGroupId))
+                .findFirst().map(QuizGroup::getTitle)
+                .orElse(null);
     }
 
     public ResponseEntity<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {
