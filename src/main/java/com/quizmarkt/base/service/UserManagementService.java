@@ -2,18 +2,15 @@ package com.quizmarkt.base.service;
 
 import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
+import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
-import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.SignInResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.manager.UserManagementManager;
-import com.quizmarkt.base.manager.exception.CallWebServiceException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
 
 /**
  * @author anercan
@@ -24,22 +21,6 @@ import java.time.ZonedDateTime;
 public class UserManagementService extends BaseService {
 
     private final UserManagementManager userManagementManager;
-
-    public ResponseEntity<SignInResponse> signInWithMail(SignInRequest signInRequest) {
-        if (StringUtils.isEmpty(signInRequest.getEmail()) || StringUtils.isEmpty(signInRequest.getPassword())) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            String jwt = userManagementManager.callBasicSignInService(signInRequest);
-            if (StringUtils.isNotEmpty(jwt)) {
-                return ResponseEntity.ok(SignInResponse.builder().jwt(jwt).build());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        } catch (CallWebServiceException e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
 
     public ResponseEntity<SignInResponse> signInWithGoogle(GoogleLoginRequest request) {
         String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getToken(), request.getAppId()));
@@ -58,13 +39,21 @@ public class UserManagementService extends BaseService {
         return request;
     }
 
-    public ResponseEntity<String> updatePremiumInfo() {
+    public ResponseEntity<String> googlePlaySubscribe(GoogleSubscriptionRequest googleSubscriptionRequest) {
         PremiumInfoRequest premiumInfoRequest = new PremiumInfoRequest();
+        premiumInfoRequest.setGoogleSubscriptionRequest(googleSubscriptionRequest);
         premiumInfoRequest.setPremiumType(PremiumType.LEVEL1);
-        premiumInfoRequest.setExpireDate(ZonedDateTime.now().plusDays(31L));
         premiumInfoRequest.setUserId(getUserId());
-        premiumInfoRequest.setJwtExpireDate(31L);
-        UpdatePremiumInfoResponse updatePremiumInfoResponse = userManagementManager.setPremiumInfo(premiumInfoRequest);
-        return ResponseEntity.ok(updatePremiumInfoResponse.getJwt());
+        premiumInfoRequest.setAppId(getAppId());
+        try {
+            UpdatePremiumInfoResponse updatePremiumInfoResponse = userManagementManager.googlePlaySubscribe(premiumInfoRequest);
+            if (updatePremiumInfoResponse.isSucceed()) {
+                return ResponseEntity.ok(updatePremiumInfoResponse.getJwt());
+            }
+            return ResponseEntity.internalServerError().build();
+        } catch (Exception e) {
+            logger.error("googlePlaySubscribe got exception.");
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
