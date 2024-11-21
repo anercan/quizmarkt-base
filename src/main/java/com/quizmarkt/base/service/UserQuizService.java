@@ -35,7 +35,7 @@ public class UserQuizService extends BaseService {
     public ResponseEntity<UserQuizListResponse> getUserQuizList() {
         List<UserQuizInListResponse> userQuizInListResponses = new ArrayList<>();
         List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();
-        for (UserQuiz userQuiz:userQuizList) {
+        for (UserQuiz userQuiz : userQuizList) {
             UserQuizInListResponse userQuizInListResponse = userQuizMapper.toUserQuizListResponse(userQuiz);
             Long quizGroupId = userQuizInListResponse.getQuizGroupId();
             userQuizInListResponse.setQuizGroupName(getQuizGroupNameFromUserQuiz(userQuiz, quizGroupId));
@@ -43,7 +43,7 @@ public class UserQuizService extends BaseService {
         }
         return ResponseEntity.ok(UserQuizListResponse.builder()
                 .userQuizResponseList(userQuizInListResponses)
-                            .build());
+                .build());
     }
 
     private String getQuizGroupNameFromUserQuiz(UserQuiz userQuiz, Long quizGroupId) {

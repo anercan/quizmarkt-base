@@ -4,7 +4,9 @@ import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.entity.UserWrongAnswer;
 import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.response.UserDataResponse;
+import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.manager.QuizManager;
+import com.quizmarkt.base.manager.UserManagementManager;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -26,8 +29,11 @@ public class ProfileService extends BaseService {
 
     private final UserQuizManager userQuizManager;
     private final QuizManager quizManager;
+    private final UserManagementManager userManagementManager;
 
     public ResponseEntity<UserDataResponse> getUserData() {
+        Optional<UserInfo> userInfo = getUserInfo();
+
         if (isRegularPremium()) {
             List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
             long completedQuizCount = userQuizList.stream()
@@ -43,7 +49,7 @@ public class ProfileService extends BaseService {
                     .userSolvedQuizCount(completedQuizCount)
                     .userOngoingQuizCount(ongoingQuizCount)
                     .wrongsMap(wrongsInfo)
-                    .avatarUrl("https://lh3.googleusercontent.com/a/ACg8ocKd5hcKqsKsk1ol2I6auAMVewmw0AJzy16BMZQti4UIvE_a1g=s96-c") //todo
+                    .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
                     .build();
             return ResponseEntity.ok(build);
         } else {
@@ -51,10 +57,18 @@ public class ProfileService extends BaseService {
                     .totalQuizCount(quizManager.getActiveQuizCount())
                     .userSolvedQuizCount(userQuizManager.getUserQuizCount(UserQuizState.COMPLETED))
                     .userOngoingQuizCount(userQuizManager.getUserQuizCount(UserQuizState.ON_GOING))
-                    .avatarUrl("https://lh3.googleusercontent.com/a/ACg8ocKd5hcKqsKsk1ol2I6auAMVewmw0AJzy16BMZQti4UIvE_a1g=s96-c") //todo
+                    .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
                     .build();
             return ResponseEntity.ok(build);
         }
+    }
+
+    private Optional<UserInfo> getUserInfo() {
+        UserInfo userInfo = userManagementManager.getUserInfo(getUserId());
+        if (userInfo != null) {
+            return Optional.of(userInfo);
+        }
+        return Optional.empty();
     }
 
     private Map<String, Integer> getWrongsInfo(List<UserQuiz> userQuizList) {

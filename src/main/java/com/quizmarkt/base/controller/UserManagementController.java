@@ -2,7 +2,7 @@ package com.quizmarkt.base.controller;
 
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
-import com.quizmarkt.base.data.response.SignInResponse;
+import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.service.UserManagementService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +23,12 @@ public class UserManagementController {
     private final UserManagementService userManagementService;
 
     @PostMapping("/google-sign-in")
-    public ResponseEntity<SignInResponse> googleOATH2(@RequestBody GoogleLoginRequest request) {
+    public ResponseEntity<JwtResponse> googleOATH2(@RequestBody GoogleLoginRequest request) {
         return userManagementService.signInWithGoogle(request);
     }
 
     @PostMapping("/google-play-subscribe")
-    public ResponseEntity<String> googlePlaySubscribe(@RequestBody GoogleSubscriptionRequest googleSubscriptionRequest) {
+    public ResponseEntity<JwtResponse> googlePlaySubscribe(@RequestBody GoogleSubscriptionRequest googleSubscriptionRequest) {
         return userManagementService.googlePlaySubscribe(googleSubscriptionRequest);
     }
 

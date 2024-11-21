@@ -3,8 +3,8 @@ package com.quizmarkt.base.manager;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
+import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.data.response.UserManagementSignInResponse;
-import com.quizmarkt.base.manager.exception.CallWebServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class UserManagementManager extends BaseManager {
             }
         } catch (Exception e) {
             logger.error("callBasicSignInService failed for token:{} with cause:", googleLoginRequest.getToken(), e);
-            throw new CallWebServiceException(e);
+            return null;
         }
     }
 
@@ -51,7 +51,23 @@ public class UserManagementManager extends BaseManager {
             }
         } catch (Exception e) {
             logger.error("googlePlaySubscribe failed for with cause:", e);
-            throw new CallWebServiceException(e);
+            return null;
+        }
+    }
+
+    public UserInfo getUserInfo(String userId) {
+        try {
+            String endpoint = userManagementServiceEndpoint + "/user-management/user-info/get-user-info";
+            ResponseEntity<UserInfo> userInfoResponseEntity = userManagementRestTemplate.postForEntity(endpoint, userId, UserInfo.class);
+            if (userInfoResponseEntity.getStatusCode().is2xxSuccessful() && userInfoResponseEntity.getBody() != null) {
+                return userInfoResponseEntity.getBody();
+            } else {
+                logger.warn("getUserInfo has not succeed.");
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("getUserInfo failed for with cause:", e);
+            return null;
         }
     }
 }

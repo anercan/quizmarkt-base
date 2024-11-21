@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @SuperBuilder
-public class SignInResponse extends ServiceResponse {
+public class JwtResponse extends ServiceResponse {
     private String jwt;
 }
