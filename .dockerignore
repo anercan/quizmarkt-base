@@ -1,0 +1,24 @@
+# Ignore Maven wrapper files
+mvnw
+mvnw.cmd
+
+# Ignore the target directory (build artifacts)
+target/
+
+# Ignore logs
+*.log
+
+# Ignore .git directory
+.git/
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore OS files (macOS, Windows)
+.DS_Store
+Thumbs.db
+
+# Ignore any temporary files
+*.tmp
+*.bak

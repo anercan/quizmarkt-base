@@ -1,0 +1,23 @@
+server:
+  servlet:
+    context-path: /quizmarkt-base
+  port: 9092
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  datasource:
+    platform: postgres
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/quizmarkt_db
+    username: root
+    password: admin
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true

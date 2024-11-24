@@ -1,0 +1,45 @@
+name: Build, Push, and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build the Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/quizmarkt-backend:latest .
+
+      # Push the Docker image to Docker Hub
+      - name: Push Docker Image to Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/quizmarkt-backend:latest
+
+      # Deploy to EC2
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.13
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker stop quizmarkt || true
+            docker rm quizmarkt || true
+            cd docker-compose-files/
+            docker-compose up -d

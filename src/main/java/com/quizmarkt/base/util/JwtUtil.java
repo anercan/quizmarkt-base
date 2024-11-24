@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     public static String getJwtSecret() {
-        return StringUtils.isEmpty(JWT_SECRET) ? "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N" : JWT_SECRET;
+        return StringUtils.isEmpty(JWT_SECRET) ? "local_key" : JWT_SECRET;
     }
 
     public static Claims getClaims(String jwt) {
