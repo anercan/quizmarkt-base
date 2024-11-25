@@ -21,3 +21,7 @@ springdoc:
     enabled: false
   api-docs:
     enabled: false
+
+webService:
+  userManagement:
+    endpoint: ${WEB_SERVICE_USER_MANAGEMENT_ENDPOINT:http://localhost:9091}

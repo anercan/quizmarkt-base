@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 public class UserManagementManager extends BaseManager {
 
     private final RestTemplate userManagementRestTemplate;
-    @Value("${webService.userManagement.endpoint:http://user-management:9091}")
+    @Value("${webService.userManagement.endpoint}")
     private String userManagementServiceEndpoint;
 
     public String googleSignIn(GoogleLoginRequest googleLoginRequest) {
