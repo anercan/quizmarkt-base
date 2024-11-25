@@ -42,5 +42,5 @@ jobs:
             docker stop quizmarkt || true
             docker rm quizmarkt || true
             cd docker-compose-files/
-            docker-compose pull quizmarkt
+            docker pull ${{ secrets.DOCKER_USERNAME }}/quizmarkt-backend:latest
             docker-compose up -d
