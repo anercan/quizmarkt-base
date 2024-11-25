@@ -14,7 +14,7 @@ public class JwtUtil {
     public static final String USER_ID = "user-id";
     public static final String PREMIUM_TYPE = "premium-type";
     public static final String APP_ID = "app-id";
-    private static final String JWT_SECRET = System.getProperty("JWT_SECRET");
+    private static final String JWT_SECRET = System.getenv("JWT_SECRET");
 
     public static boolean checkJWT(String jwt) {
         try {

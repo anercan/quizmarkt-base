@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import static com.quizmarkt.base.util.JwtUtil.getClaims;
 import static com.quizmarkt.base.util.JwtUtil.getJwtFromRequest;
 
+@Slf4j
 public class JwtFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -21,6 +23,7 @@ public class JwtFilter implements Filter {
 
         String path = httpRequest.getRequestURI();
         if (canSkipFilter(path)) {
+            log.warn("JWT filter will skipped for req:{}", request);
             chain.doFilter(request, response);
             return;
         }
@@ -30,6 +33,7 @@ public class JwtFilter implements Filter {
             if (StringUtils.isNotEmpty(jwt) && JwtUtil.checkJWT(jwt)) {
                 Claims claims = getClaims(jwt);
                 if (claims == null) {
+                    log.warn("UNAUTHORIZED operation couldn't get claims jwt:{}", jwt);
                     httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     UserContextHolder.clear();
                     return;
@@ -37,10 +41,12 @@ public class JwtFilter implements Filter {
                 UserContextHolder.createUserContextThreadLocal(claims);
                 chain.doFilter(request, response);
             } else {
+                log.warn("UNAUTHORIZED operation jwt:{}", jwt);
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 UserContextHolder.clear();
             }
         } catch (Exception ex) {
+            log.warn("UNAUTHORIZED operation req:{}", httpRequest);
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             UserContextHolder.clear();
         }
@@ -51,8 +57,10 @@ public class JwtFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+    }
 }

@@ -42,4 +42,5 @@ jobs:
             docker stop quizmarkt || true
             docker rm quizmarkt || true
             cd docker-compose-files/
+            docker-compose pull quizmarkt
             docker-compose up -d
