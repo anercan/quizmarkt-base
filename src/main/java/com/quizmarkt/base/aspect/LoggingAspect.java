@@ -35,10 +35,14 @@ public class LoggingAspect {
         String response = "";
         if (proceed instanceof ResponseEntity<?>) {
             Object body = ((ResponseEntity<?>) proceed).getBody();
-            response = "ResponseBody:" + (Objects.nonNull(body) ? body : null) + " ResponseCode:" + ((ResponseEntity<?>) proceed).getStatusCode();
+            response = "Body:" + (Objects.nonNull(body) ? body : "null") + " Code:" + ((ResponseEntity<?>) proceed).getStatusCode();
         }
         String request = Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).reduce("", String::concat);
-        logger.info("RequestBody: {} to {} finished in {} ms with ResponseBody: {} userId:{}", request, methodName, elapsedTime, response,UserContextHolder.getUserId());
+        logger.info("Method:{} called and " +
+                "took time:{} " +
+                "Request:{} " +
+                "Response:{} " +
+                "userID:{}", methodName, elapsedTime, request, response, UserContextHolder.getUserId());
         return proceed;
     }
 }
