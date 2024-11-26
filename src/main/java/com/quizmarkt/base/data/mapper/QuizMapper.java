@@ -1,6 +1,5 @@
 package com.quizmarkt.base.data.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.entity.UserQuiz;
@@ -8,6 +7,7 @@ import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.data.response.QuizResponseWithUserData;
+import com.quizmarkt.base.util.MapperUtils;
 import com.quizmarkt.base.util.UserQuizUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -53,7 +53,10 @@ public interface QuizMapper {
             quiz.setPriority(request.getPriority());
             quiz.setAvailablePremiumTypes(request.getAvailablePremiumTypes());
             if (StringUtils.isNotEmpty(request.getAttributes())) {
-                quiz.setAttributes(new ObjectMapper().readValue(request.getAttributes(), Map.class));
+                Map<String, String> attributeMap = MapperUtils.getAttributeMapFromString(request.getAttributes());
+                if (attributeMap != null) {
+                    quiz.setAttributes(attributeMap);
+                }
             }
             if (!CollectionUtils.isEmpty(request.getQuizGroupIds())) {
                 List<QuizGroup> quizGroupList = new ArrayList<>();

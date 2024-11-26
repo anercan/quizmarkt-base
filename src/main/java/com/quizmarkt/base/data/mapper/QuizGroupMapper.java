@@ -1,9 +1,9 @@
 package com.quizmarkt.base.data.mapper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import com.quizmarkt.base.data.response.QuizGroupWithUserData;
+import com.quizmarkt.base.util.MapperUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
 
@@ -35,7 +35,10 @@ public interface QuizGroupMapper {
             quizGroup.setTitle(request.getTitle());
             quizGroup.setPriority(request.getPriority());
             if (StringUtils.isNotEmpty(request.getAttributes())) {
-                quizGroup.setAttributes(new ObjectMapper().readValue(request.getAttributes(), Map.class));
+                Map<String, String> attributeMap = MapperUtils.getAttributeMapFromString(request.getAttributes());
+                if (attributeMap != null) {
+                    quizGroup.setAttributes(attributeMap);
+                }
             }
             return Optional.of(quizGroup);
         } catch (Exception e) {
