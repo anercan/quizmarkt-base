@@ -6,10 +6,7 @@ import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.data.request.ReviewWrongQuestionsRequest;
-import com.quizmarkt.base.data.response.BooleanResponse;
-import com.quizmarkt.base.data.response.ReviewWrongQuestionListResponse;
-import com.quizmarkt.base.data.response.UserQuizInListResponse;
-import com.quizmarkt.base.data.response.UserQuizListResponse;
+import com.quizmarkt.base.data.response.*;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -82,5 +79,31 @@ public class UserQuizService extends BaseService {
                         .reviewWrongQuestionList(userQuizMapper.toListUserWrongAnswerResponse(userQuiz.getWrongQuestionList()))
                         .build()
         );
+    }
+
+    public ResponseEntity<CompletedStaticsResponse> getCompletedQuizStatics(Long quizId) {
+        try {
+            int better = 0;
+            int worse = 0;
+            int equal = 0;
+            Optional<UserQuiz> completedUserQuizOpt = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
+            if (completedUserQuizOpt.isPresent()) {
+                List<UserQuiz> otherUserQuizzes = userQuizManager.getUserQuizWithQuizId(quizId);
+                for (UserQuiz otherUserQuiz: otherUserQuizzes) {
+                    if (otherUserQuiz.getWrongQuestionList().size() > completedUserQuizOpt.get().getWrongQuestionList().size()) {
+                        better++;
+                    } else if (otherUserQuiz.getWrongQuestionList().size() == completedUserQuizOpt.get().getWrongQuestionList().size()) {
+                        equal++;
+                    } else if (otherUserQuiz.getWrongQuestionList().size() < completedUserQuizOpt.get().getWrongQuestionList().size()) {
+                        worse++;
+                    }
+                }
+                return ResponseEntity.ok(CompletedStaticsResponse.builder().betterCount(better).equalCount(equal).worseCount(worse).build());
+            }
+        } catch (Exception e) {
+            logger.error("getCompletedQuizStatics got exception",e);
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.internalServerError().build();
     }
 }

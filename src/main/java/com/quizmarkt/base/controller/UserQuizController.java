@@ -3,6 +3,7 @@ package com.quizmarkt.base.controller;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.data.request.ReviewWrongQuestionsRequest;
 import com.quizmarkt.base.data.response.BooleanResponse;
+import com.quizmarkt.base.data.response.CompletedStaticsResponse;
 import com.quizmarkt.base.data.response.ReviewWrongQuestionListResponse;
 import com.quizmarkt.base.data.response.UserQuizListResponse;
 import com.quizmarkt.base.service.UserQuizService;
@@ -35,4 +36,10 @@ public class UserQuizController {
     public ResponseEntity<ReviewWrongQuestionListResponse> reviewWrongQuestionList(@RequestBody ReviewWrongQuestionsRequest request) {
         return userQuizService.reviewWrongsForUserQuiz(request);
     }
+
+    @GetMapping("/get-completed-quiz-statics")
+    public ResponseEntity<CompletedStaticsResponse> getCompletedQuizStatics(@RequestParam Long quizId) {
+        return userQuizService.getCompletedQuizStatics(quizId);
+    }
+
 }

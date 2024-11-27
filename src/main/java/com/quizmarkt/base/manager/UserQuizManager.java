@@ -68,6 +68,15 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
+    public List<UserQuiz> getUserQuizWithQuizId(Long quizId) {
+        try {
+            return userQuizRepository.findByQuiz_Id(quizId);
+        } catch (Exception e) {
+            logger.error("getUserQuizWithQuizId got exception.userId:{} quizId:{}", getUserId(), quizId, e);
+            return Collections.emptyList();
+        }
+    }
+
     public List<UserQuiz> getOrderedUserQuizList() {
         try {
             return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDateDesc(getAppId(), getUserId());
