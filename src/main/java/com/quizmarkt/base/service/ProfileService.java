@@ -3,6 +3,7 @@ package com.quizmarkt.base.service;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.entity.UserWrongAnswer;
 import com.quizmarkt.base.data.enums.UserQuizState;
+import com.quizmarkt.base.data.response.ActivityData;
 import com.quizmarkt.base.data.response.UserDataResponse;
 import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.manager.QuizManager;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,13 +45,13 @@ public class ProfileService extends BaseService {
                     .filter(userQuiz -> UserQuizState.ON_GOING.equals(userQuiz.getState()))
                     .count();
 
-            Map<String, Integer> wrongsInfo = getWrongsInfo(userQuizList);
             UserDataResponse build = UserDataResponse.builder()
                     .totalQuizCount(quizManager.getActiveQuizCount())
                     .userSolvedQuizCount(completedQuizCount)
                     .userOngoingQuizCount(ongoingQuizCount)
-                    .wrongsMap(wrongsInfo)
+                    .wrongsMap(getWrongsInfo(userQuizList))
                     .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
+                    .activityDataList(getActivityData(userQuizList))
                     .build();
             return ResponseEntity.ok(build);
         } else {
@@ -60,6 +62,23 @@ public class ProfileService extends BaseService {
                     .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
                     .build();
             return ResponseEntity.ok(build);
+        }
+    }
+
+    private List<ActivityData> getActivityData(List<UserQuiz> userQuizList) {
+        try {
+            Map<LocalDate, Long> groupedByDate = userQuizList.stream()
+                    .collect(Collectors.groupingBy(
+                            userQuiz -> userQuiz.getCompleteDate().toLocalDate(),
+                            Collectors.counting()
+                    ));
+
+            return groupedByDate.entrySet().stream()
+                    .map(entry -> new ActivityData(entry.getKey().toString(), entry.getValue().intValue()))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            logger.error("getActivityData got exception userId:{}",getUserId());
+            return Collections.emptyList();
         }
     }
 
