@@ -32,7 +32,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @EntityGraph(attributePaths = {"questionList"})
     @Query("SELECT quiz FROM Quiz quiz " +
             "LEFT JOIN FETCH quiz.questionList q " +
-            "WHERE quiz.id = :quizId " +
+            "WHERE quiz.id = :quizId and q.active = true " +
             "ORDER BY q.priority ASC")
     Optional<Quiz> findQuizWithQuestionsSorted(@Param("quizId") Long quizId);
 
