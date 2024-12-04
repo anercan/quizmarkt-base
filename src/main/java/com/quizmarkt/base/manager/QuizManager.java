@@ -26,7 +26,7 @@ public class QuizManager extends BaseManager {
         try {
             QuizGroup quizGroup = new QuizGroup();
             quizGroup.setId(request.getQuizGroupId());
-            return quizRepository.findAllByQuizGroupListContainingAndActive(quizGroup, true, PageRequest.of(request.getPage(), request.getPageSize()));
+            return quizRepository.findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(quizGroup, true, PageRequest.of(request.getPage(), request.getPageSize()));
         } catch (Exception e) {
             logger.error("getQuizListWithGroupId got exception.userId:{},groupId:{}", getUserId(), e);
             return Collections.emptyList();

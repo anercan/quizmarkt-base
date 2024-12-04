@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-    List<Quiz> findAllByQuizGroupListContainingAndActive(QuizGroup quizGroupList, boolean active, Pageable pageable); //todo cache
+    List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroupList, boolean active, Pageable pageable); //todo cache
     List<Quiz> findAllBy(Pageable pageable);
     List<Quiz> findAllByQuizGroupListContaining(QuizGroup quizGroup,Pageable pageable);
     int countAllByQuizGroupListContainingAndActive(QuizGroup quizGroupList, boolean active);

@@ -21,7 +21,7 @@ public class QuizGroupManager extends BaseManager {
 
     public List<QuizGroup> getActiveQuizGroups(com.quizmarkt.base.data.request.PageRequest request) {
         try {
-            return quizGroupRepository.findAllByActiveAndAppId(true, getAppId(), PageRequest.of(request.getPage(), request.getPageSize()));
+            return quizGroupRepository.findAllByActiveAndAppIdOrderByPriorityAsc(true, getAppId(), PageRequest.of(request.getPage(), request.getPageSize()));
         } catch (Exception e) {
             logger.error("getQuizGroups got exception request:{}", request.toString(), e);
             return Collections.emptyList();
