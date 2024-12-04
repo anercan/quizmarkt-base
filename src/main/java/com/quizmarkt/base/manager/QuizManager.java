@@ -33,11 +33,11 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    public Optional<Quiz> getQuizWithId(Long quizId) {
+    public Optional<Quiz> getQuizWithIdQuestionsSorted(Long quizId) {
         try {
-            return quizRepository.findById(quizId);
+            return quizRepository.findQuizWithQuestionsSorted(quizId);
         } catch (Exception e) {
-            logger.error("getWithId got exception.userId:{}", getUserId(), e);
+            logger.error("getQuizWithIdQuestionsSorted got exception.userId:{}", getUserId(), e);
             return Optional.empty();
         }
     }

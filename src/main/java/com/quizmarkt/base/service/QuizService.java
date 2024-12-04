@@ -41,7 +41,7 @@ public class QuizService extends BaseService {
     }
 
     public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) { // todo check joins entity graph
-        Optional<Quiz> quizWithId = quizManager.getQuizWithId(quizId);
+        Optional<Quiz> quizWithId = quizManager.getQuizWithIdQuestionsSorted(quizId);
         if (quizWithId.isEmpty()) {
             return ResponseEntity.internalServerError().build();
         }
