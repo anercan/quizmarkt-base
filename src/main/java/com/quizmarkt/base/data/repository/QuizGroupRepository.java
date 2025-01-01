@@ -17,9 +17,9 @@ import java.util.List;
 @Repository
 public interface QuizGroupRepository extends JpaRepository<QuizGroup, Long> {
 
-    @Cacheable(value = CacheConstants.QUIZ_GROUPS, key = "#appId")
+    @Cacheable(value = CacheConstants.QUIZ_GROUPS, key = "#p1")
     @EntityGraph(attributePaths = "attributes")
-    List<QuizGroup> findAllByActiveAndAppIdOrderByPriorityAsc(boolean active, Integer appId);
+    List<QuizGroup> findAllByActiveAndAppIdOrderByPriorityAsc(boolean active, int appId);
     List<QuizGroup> findAllByAppId(int appId, Pageable pageable);
 
 }
