@@ -7,6 +7,8 @@ server:
   port: 9092
 
 spring:
+  cache:
+    type: caffeine
   jpa:
     database: POSTGRESQL
     show-sql: true
@@ -24,3 +26,11 @@ springdoc:
     enabled: true
   api-docs:
     enabled: true
+
+webService:
+  userManagement:
+    endpoint: ${WEB_SERVICE_USER_MANAGEMENT_ENDPOINT:http://localhost:9091}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET}

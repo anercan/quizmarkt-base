@@ -7,6 +7,8 @@ server:
   port: ${SERVER_PORT}
 
 spring:
+  cache:
+    type: caffeine
   jpa:
     database: POSTGRESQL
     show-sql: ${POSTGRE_DB_SHOW_SQL:false}
@@ -21,10 +23,14 @@ spring:
 
 springdoc:
   swagger-ui:
-    enabled: false
+    enabled: true
   api-docs:
-    enabled: false
+    enabled: true
 
 webService:
   userManagement:
     endpoint: ${WEB_SERVICE_USER_MANAGEMENT_ENDPOINT:http://localhost:9091}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET}

@@ -39,7 +39,7 @@ public class LoggingAspect {
         }
         String request = Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).reduce("", String::concat);
         logger.info("Method:{} called and " +
-                "took time:{} ms" +
+                "took time:{} ms " +
                 "Request:{} " +
                 "ResponseBody: {} " +
                 "userID:{}", methodName, elapsedTime, request, response, UserContextHolder.getUserId());

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
@@ -7,6 +8,7 @@ import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.data.response.UserManagementSignInResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -55,9 +57,11 @@ public class UserManagementManager extends BaseManager {
         }
     }
 
+    @Cacheable(value = CacheConstants.USER_INFO, key = "#userId")
     public UserInfo getUserInfo(String userId) {
         try {
             String endpoint = userManagementServiceEndpoint + "/user-management/user-info/get-user-info";
+            logger.info("getUserInfo will fetched from user management service id:{}", userId);
             ResponseEntity<UserInfo> userInfoResponseEntity = userManagementRestTemplate.postForEntity(endpoint, userId, UserInfo.class);
             if (userInfoResponseEntity.getStatusCode().is2xxSuccessful() && userInfoResponseEntity.getBody() != null) {
                 return userInfoResponseEntity.getBody();

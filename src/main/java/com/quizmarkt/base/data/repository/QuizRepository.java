@@ -1,7 +1,9 @@
 package com.quizmarkt.base.data.repository;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +29,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     int countAllByQuizGroupListContainingAndActive(QuizGroup quizGroupList, boolean active);
 
+    @Cacheable(value = CacheConstants.QUIZ_COUNT, key = "#appId")
     int countAllByActiveAndAppId(boolean active, int appId);
 
     @EntityGraph(attributePaths = {"questionList"})

@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -34,11 +33,7 @@ public class JwtUtil {
     }
 
     private static SecretKeySpec getKey() {
-        return new SecretKeySpec(getJwtSecret().getBytes(StandardCharsets.UTF_8), SIGNATURE_ALGORITHM.getJcaName());
-    }
-
-    public static String getJwtSecret() {
-        return StringUtils.isEmpty(JWT_SECRET) ? "local_key" : JWT_SECRET;
+        return new SecretKeySpec(JWT_SECRET.getBytes(StandardCharsets.UTF_8), SIGNATURE_ALGORITHM.getJcaName());
     }
 
     public static Claims getClaims(String jwt) {

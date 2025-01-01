@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageRequest {
-    int pageSize;
-    int page;
-    int appId = 1;
+    private int pageSize;
+    private int page;
+    private int appId = 1;
 }

@@ -42,7 +42,7 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    public int getActiveQuizCount() { //todo cachable
+    public int getActiveQuizCount() {
         try {
             return quizRepository.countAllByActiveAndAppId(true,getAppId());
         } catch (Exception e) {

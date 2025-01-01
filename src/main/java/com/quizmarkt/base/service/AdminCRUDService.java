@@ -1,5 +1,6 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Answer;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
@@ -19,6 +20,7 @@ import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -51,6 +53,7 @@ public class AdminCRUDService {
         return ResponseEntity.ok(getQuizListWithGroupIdIfExist(request));
     }
 
+    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_GROUPS}, allEntries = true)
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
         Optional<Quiz> optionalQuiz = request.getId() != null ? quizRepository.findById(request.getId()) : Optional.empty();
         Optional<Quiz> quiz = quizMapper.toQuizEntity(request, optionalQuiz);
@@ -63,6 +66,7 @@ public class AdminCRUDService {
         return ResponseEntity.ok(quizGroupList);
     }
 
+    @CacheEvict(value = {CacheConstants.QUIZ_GROUPS}, allEntries = true)
     public ResponseEntity<Void> saveQuizGroup(CreateOrUpdateQuizGroup request) {
         Optional<QuizGroup> optionalQuizGroup = request.getId() != null ? quizGroupRepository.findById(request.getId()) : Optional.empty();
         Optional<QuizGroup> quizGroup = quizGroupMapper.toQuizGroupEntity(request, optionalQuizGroup);
