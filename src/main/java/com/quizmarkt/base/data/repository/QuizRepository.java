@@ -29,7 +29,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     int countAllByQuizGroupListContainingAndActive(QuizGroup quizGroupList, boolean active);
 
-    @Cacheable(value = CacheConstants.QUIZ_COUNT, key = "#p1")
+    @Cacheable(value = CacheConstants.QUIZ_COUNT, key = "#appId")
     int countAllByActiveAndAppId(boolean active, int appId);
 
     @EntityGraph(attributePaths = {"questionList"})
