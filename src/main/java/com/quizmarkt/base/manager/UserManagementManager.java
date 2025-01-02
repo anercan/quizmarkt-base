@@ -57,7 +57,7 @@ public class UserManagementManager extends BaseManager {
         }
     }
 
-    @Cacheable(value = CacheConstants.USER_INFO, key = "#userId",condition = "#result != null")
+    @Cacheable(value = CacheConstants.USER_INFO, key = "#userId", unless = "#result == null")
     public UserInfo getUserInfo(String userId) {
         try {
             String endpoint = userManagementServiceEndpoint + "/user-management/user-info/get-user-info";
