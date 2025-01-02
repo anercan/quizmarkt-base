@@ -53,17 +53,12 @@ public class AdminCRUDService {
         return ResponseEntity.ok(getQuizListWithGroupIdIfExist(request));
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_GROUPS}, allEntries = true)
+    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ_GROUPS,CacheConstants.USER_DATA}, allEntries = true)
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
         Optional<Quiz> optionalQuiz = request.getId() != null ? quizRepository.findById(request.getId()) : Optional.empty();
         Optional<Quiz> quiz = quizMapper.toQuizEntity(request, optionalQuiz);
         quiz.ifPresent(this::saveQuizWithUpdateQuizGroup);
         return ResponseEntity.ok().build();
-    }
-
-    public ResponseEntity<List<QuizGroup>> getQuizGroupList(@RequestBody PageRequest request) {
-        List<QuizGroup> quizGroupList = getQuizGroups(request);
-        return ResponseEntity.ok(quizGroupList);
     }
 
     @CacheEvict(value = {CacheConstants.QUIZ_GROUPS}, allEntries = true)
@@ -74,16 +69,22 @@ public class AdminCRUDService {
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<List<Question>> getQuestionList(Long quizId) {
-        Optional<Quiz> optQuiz = quizRepository.findById(quizId);
-        return optQuiz.map(quiz -> ResponseEntity.ok(quiz.getQuestionList())).orElseGet(() -> ResponseEntity.ok(Collections.emptyList()));
-    }
-
+    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST}, allEntries = true)
     public ResponseEntity<Void> saveQuestion(CreateOrUpdateQuestion request) {
         Optional<Question> optionalQuestion = request.getId() != null ? questionRepository.findById(request.getId()) : Optional.empty();
         Optional<Question> question = questionMapper.toQuestionEntity(request, optionalQuestion);
         question.ifPresent(q -> this.saveQuestionWithAnswers(q, request.getQuizId(), request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst()));
         return ResponseEntity.ok().build();
+    }
+
+    public ResponseEntity<List<QuizGroup>> getQuizGroupList(@RequestBody PageRequest request) {
+        List<QuizGroup> quizGroupList = getQuizGroups(request);
+        return ResponseEntity.ok(quizGroupList);
+    }
+
+    public ResponseEntity<List<Question>> getQuestionList(Long quizId) {
+        Optional<Quiz> optQuiz = quizRepository.findById(quizId);
+        return optQuiz.map(quiz -> ResponseEntity.ok(quiz.getQuestionList())).orElseGet(() -> ResponseEntity.ok(Collections.emptyList()));
     }
 
     public List<Quiz> getQuizListWithGroupIdIfExist(QuizListWithGroupIdRequest request) {

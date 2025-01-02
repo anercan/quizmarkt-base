@@ -32,14 +32,19 @@ public class AdminController {
         return adminService.getQuizGroupList(request);
     }
 
-    @PostMapping("/save-quiz-group")
-    public ResponseEntity<Void> getQuizGroupList(@RequestBody CreateOrUpdateQuizGroup request) {
-        return adminService.saveQuizGroup(request);
-    }
-
     @PostMapping("/get-quizzes")
     public ResponseEntity<List<Quiz>> getQuizList(@RequestBody QuizListWithGroupIdRequest request) {
         return adminService.getQuizListWithGroupIfExist(request);
+    }
+
+    @GetMapping("/get-question-list")
+    public ResponseEntity<List<Question>> getQuizGroupList(@RequestParam Long quizId) {
+        return adminService.getQuestionList(quizId);
+    }
+
+    @PostMapping("/save-quiz-group")
+    public ResponseEntity<Void> getQuizGroupList(@RequestBody CreateOrUpdateQuizGroup request) {
+        return adminService.saveQuizGroup(request);
     }
 
     @PostMapping("/save-quiz")
@@ -51,10 +56,4 @@ public class AdminController {
     public ResponseEntity<Void> getQuizGroupList(@RequestBody CreateOrUpdateQuestion request) {
         return adminService.saveQuestion(request);
     }
-
-    @GetMapping("/get-question-list")
-    public ResponseEntity<List<Question>> getQuizGroupList(@RequestParam Long quizId) {
-        return adminService.getQuestionList(quizId);
-    }
-
 }

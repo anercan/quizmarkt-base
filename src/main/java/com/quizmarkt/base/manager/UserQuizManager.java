@@ -1,5 +1,6 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
@@ -10,6 +11,7 @@ import com.quizmarkt.base.data.repository.UserQuizRepository;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.util.UserQuizUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -104,7 +106,8 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request) {
+    @CacheEvict(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
+    public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request, String userId, Integer appId, boolean regularPremium) {
         try {
             UserQuiz userQuiz = new UserQuiz();
             Quiz quiz = new Quiz();
@@ -124,7 +127,8 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
+    @CacheEvict(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
+    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz, String userId, Integer appId, boolean regularPremium) {
         try {
             if (isUpdatedBefore(request, userQuiz)) {
                 logger.warn("This question answered before.request:{}", request);

@@ -20,7 +20,7 @@ public class CacheConfig {
         cacheManager.registerCustomCache(
                 CacheConstants.QUIZ_GROUPS,
                 Caffeine.newBuilder()
-                        .maximumSize(10)
+                        .maximumSize(3)
                         .build()
         );
 
@@ -36,6 +36,20 @@ public class CacheConfig {
                 Caffeine.newBuilder()
                         .maximumSize(20)
                         .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                CacheConstants.QUIZ_LIST,
+                Caffeine.newBuilder()
+                        .maximumSize(20)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                CacheConstants.USER_DATA,
+                Caffeine.newBuilder()
+                        .maximumSize(20)
                         .build()
         );
 

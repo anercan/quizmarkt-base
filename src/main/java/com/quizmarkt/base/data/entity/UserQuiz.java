@@ -25,7 +25,7 @@ public class UserQuiz {
     private String userId;
     private UserQuizState state;
     private ZonedDateTime completeDate;
-    private int appId; // todo dbde check et Longdu
+    private int appId;
     private Long quizGroupId;
 
     @OneToOne(fetch = FetchType.LAZY)

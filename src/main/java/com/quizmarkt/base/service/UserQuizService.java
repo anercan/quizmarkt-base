@@ -51,13 +51,14 @@ public class UserQuizService extends BaseService {
                 .orElse(null);
     }
 
+
     public ResponseEntity<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {
         Optional<UserQuiz> optionalUserQuiz = userQuizManager.getUserQuizWithQuizIdAndUserId(request.getQuizId());
         if (optionalUserQuiz.isEmpty()) {
-            UserQuiz userQuiz = userQuizManager.createNewUserQuiz(request);
+            UserQuiz userQuiz = userQuizManager.createNewUserQuiz(request, getUserId(), getAppId(), isRegularPremium());
             return ResponseEntity.ok(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
         } else {
-            UserQuiz userQuiz = userQuizManager.updateUserQuiz(request, optionalUserQuiz.get());
+            UserQuiz userQuiz = userQuizManager.updateUserQuiz(request, optionalUserQuiz.get(), getUserId(), getAppId(), isRegularPremium());
             return ResponseEntity.ok(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
         }
     }
@@ -89,7 +90,7 @@ public class UserQuizService extends BaseService {
             Optional<UserQuiz> completedUserQuizOpt = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
             if (completedUserQuizOpt.isPresent()) {
                 List<UserQuiz> otherUserQuizzes = userQuizManager.getUserQuizWithQuizId(quizId);
-                for (UserQuiz otherUserQuiz: otherUserQuizzes) {
+                for (UserQuiz otherUserQuiz : otherUserQuizzes) {
                     if (otherUserQuiz.getWrongQuestionList().size() > completedUserQuizOpt.get().getWrongQuestionList().size()) {
                         better++;
                     } else if (otherUserQuiz.getWrongQuestionList().size() == completedUserQuizOpt.get().getWrongQuestionList().size()) {
@@ -101,7 +102,7 @@ public class UserQuizService extends BaseService {
                 return ResponseEntity.ok(CompletedStaticsResponse.builder().betterCount(better).equalCount(equal).worseCount(worse).build());
             }
         } catch (Exception e) {
-            logger.error("getCompletedQuizStatics got exception",e);
+            logger.error("getCompletedQuizStatics got exception", e);
             return ResponseEntity.internalServerError().build();
         }
         return ResponseEntity.internalServerError().build();
