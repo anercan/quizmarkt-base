@@ -11,7 +11,7 @@ spring:
     type: caffeine
   jpa:
     database: POSTGRESQL
-    show-sql: ${POSTGRE_DB_SHOW_SQL:true}
+    show-sql: ${POSTGRE_DB_SHOW_SQL:false}
     hibernate:
       ddl-auto: none
   datasource:
@@ -23,9 +23,9 @@ spring:
 
 springdoc:
   swagger-ui:
-    enabled: true
+    enabled: false
   api-docs:
-    enabled: true
+    enabled: false
 
 webService:
   userManagement:
