@@ -35,7 +35,9 @@ public class LoggingAspect {
         String response = "";
         if (proceed instanceof ResponseEntity<?>) {
             Object body = ((ResponseEntity<?>) proceed).getBody();
-            response = (Objects.nonNull(body) ? body : "null") + " Code:" + ((ResponseEntity<?>) proceed).getStatusCode();
+            response =
+                    //(Objects.nonNull(body) ? body : "null") +
+                            " Code:" + ((ResponseEntity<?>) proceed).getStatusCode();
         }
         String request = Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).reduce("", String::concat);
         logger.info("Method:{} called and " +
