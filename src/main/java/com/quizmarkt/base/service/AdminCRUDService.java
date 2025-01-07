@@ -49,10 +49,6 @@ public class AdminCRUDService {
     private final QuestionMapper questionMapper;
     private final QuizGroupMapper quizGroupMapper;
 
-    public ResponseEntity<List<Quiz>> getQuizListWithGroupIfExist(QuizListWithGroupIdRequest request) {
-        return ResponseEntity.ok(getQuizListWithGroupIdIfExist(request));
-    }
-
     @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ_GROUPS,CacheConstants.USER_DATA}, allEntries = true)
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
         Optional<Quiz> optionalQuiz = request.getId() != null ? quizRepository.findById(request.getId()) : Optional.empty();
@@ -77,6 +73,10 @@ public class AdminCRUDService {
         return ResponseEntity.ok().build();
     }
 
+    public ResponseEntity<List<Quiz>> getQuizListWithGroupIfExist(QuizListWithGroupIdRequest request) {
+        return ResponseEntity.ok(getQuizListWithGroupIdIfExist(request));
+    }
+
     public ResponseEntity<List<QuizGroup>> getQuizGroupList(@RequestBody PageRequest request) {
         List<QuizGroup> quizGroupList = getQuizGroups(request);
         return ResponseEntity.ok(quizGroupList);
@@ -92,7 +92,7 @@ public class AdminCRUDService {
             if (request.getQuizGroupId() != null) {
                 QuizGroup quizGroup = new QuizGroup();
                 quizGroup.setId(request.getQuizGroupId());
-                return quizRepository.findAllByQuizGroupListContaining(quizGroup, org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
+                return quizRepository.findAllByQuizGroupListContainingOrderByPriorityAsc(quizGroup, org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
             }
             return quizRepository.findAllBy(org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
         } catch (Exception e) {
