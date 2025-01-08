@@ -30,21 +30,20 @@ public class LoggingAspect {
     public Object logExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object proceed = proceedingJoinPoint.proceed();
-        String methodName = proceedingJoinPoint.getSignature().getName();
         long elapsedTime = System.currentTimeMillis() - startTime;
-        String response = "";
+        StringBuilder response = new StringBuilder();
         if (proceed instanceof ResponseEntity<?>) {
-            Object body = ((ResponseEntity<?>) proceed).getBody();
-            response =
-                    //(Objects.nonNull(body) ? body : "null") +
-                            " Code:" + ((ResponseEntity<?>) proceed).getStatusCode();
+            //Object body = ((ResponseEntity<?>) proceed).getBody();
+            response.append("Code:").append(((ResponseEntity<?>) proceed).getStatusCode());
+                    //.append(Objects.nonNull(body) ? body : "null");
         }
-        String request = Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).reduce("", String::concat);
+        StringBuilder requestBuilder = new StringBuilder();
+        Arrays.stream(proceedingJoinPoint.getArgs()).map(Objects::toString).forEach(requestBuilder::append);
         logger.info("Method:{} called and " +
                 "took time:{} ms " +
                 "Request:{} " +
-                "ResponseBody: {} " +
-                "userID:{}", methodName, elapsedTime, request, response, UserContextHolder.getUserId());
+                "Response: {} " +
+                "userID:{}", proceedingJoinPoint.getSignature().getName(), elapsedTime, requestBuilder, response, UserContextHolder.getUserId());
         return proceed;
     }
 }
