@@ -42,7 +42,7 @@ public class CacheConfig {
         cacheManager.registerCustomCache(
                 CacheConstants.QUIZ_LIST,
                 Caffeine.newBuilder()
-                        .maximumSize(20)
+                        .maximumSize(10)
                         .build()
         );
 
@@ -50,6 +50,13 @@ public class CacheConfig {
                 CacheConstants.USER_DATA,
                 Caffeine.newBuilder()
                         .maximumSize(20)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                CacheConstants.USER_QUIZ_LIST,
+                Caffeine.newBuilder()
+                        .maximumSize(15)
                         .build()
         );
 

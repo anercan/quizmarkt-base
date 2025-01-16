@@ -1,6 +1,5 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Answer;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
@@ -17,10 +16,10 @@ import com.quizmarkt.base.data.request.admin.CreateOrUpdateAnswer;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.manager.CacheProviderManager;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -48,25 +47,26 @@ public class AdminCRUDService {
     private final QuestionRepository questionRepository;
     private final QuestionMapper questionMapper;
     private final QuizGroupMapper quizGroupMapper;
+    private final CacheProviderManager cacheProviderManager;
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ_GROUPS,CacheConstants.USER_DATA}, allEntries = true)
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
+        cacheProviderManager.evictQuizRelatedCaches();
         Optional<Quiz> optionalQuiz = request.getId() != null ? quizRepository.findById(request.getId()) : Optional.empty();
         Optional<Quiz> quiz = quizMapper.toQuizEntity(request, optionalQuiz);
         quiz.ifPresent(this::saveQuizWithUpdateQuizGroup);
         return ResponseEntity.ok().build();
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_GROUPS}, allEntries = true)
     public ResponseEntity<Void> saveQuizGroup(CreateOrUpdateQuizGroup request) {
+        cacheProviderManager.evictQuizGroupRelatedCaches();
         Optional<QuizGroup> optionalQuizGroup = request.getId() != null ? quizGroupRepository.findById(request.getId()) : Optional.empty();
         Optional<QuizGroup> quizGroup = quizGroupMapper.toQuizGroupEntity(request, optionalQuizGroup);
         quizGroup.ifPresent(this::saveQuizGroup);
         return ResponseEntity.ok().build();
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST}, allEntries = true)
     public ResponseEntity<Void> saveQuestion(CreateOrUpdateQuestion request) {
+        cacheProviderManager.evictQuestionRelatedCaches();
         Optional<Question> optionalQuestion = request.getId() != null ? questionRepository.findById(request.getId()) : Optional.empty();
         Optional<Question> question = questionMapper.toQuestionEntity(request, optionalQuestion);
         question.ifPresent(q -> this.saveQuestionWithAnswers(q, request.getQuizId(), request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst()));

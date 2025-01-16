@@ -1,6 +1,5 @@
 package com.quizmarkt.base.manager;
 
-import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
@@ -11,7 +10,6 @@ import com.quizmarkt.base.data.repository.UserQuizRepository;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.util.UserQuizUtil;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -29,6 +27,7 @@ public class UserQuizManager extends BaseManager {
 
     private final UserQuizRepository userQuizRepository;
     private final UserQuizMapper userQuizMapper;
+    private final CacheProviderManager cacheProviderManager;
 
     public Map<Long, Integer> getUserQuizGroupIdQuizCountMap(Set<Long> quizGroupIdList) {
         try {
@@ -63,7 +62,7 @@ public class UserQuizManager extends BaseManager {
 
     public Optional<UserQuiz> getUserQuizWithQuizIdAndUserId(Long quizId) {
         try {
-            return userQuizRepository.findByQuiz_IdAndUserId(quizId, getUserId()); //todo  cache
+            return userQuizRepository.findByQuiz_IdAndUserId(quizId, getUserId()); //todo cachelersek getQuizWithUserQuizDataForStartTest evict etmeli gibi
         } catch (Exception e) {
             logger.error("getUserQuizWithQuizIdAndUserId got exception.userId:{} quizId:{}", getUserId(), quizId, e);
             return Optional.empty();
@@ -106,8 +105,9 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    @CacheEvict(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
-    public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request, String userId, Integer appId, boolean regularPremium) {
+    public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request) {
+        cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
+        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
         try {
             UserQuiz userQuiz = new UserQuiz();
             Quiz quiz = new Quiz();
@@ -127,8 +127,9 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    @CacheEvict(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
-    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz, String userId, Integer appId, boolean regularPremium) {
+    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
+        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
+        cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
         try {
             if (isUpdatedBefore(request, userQuiz)) {
                 logger.warn("This question answered before.request:{}", request);

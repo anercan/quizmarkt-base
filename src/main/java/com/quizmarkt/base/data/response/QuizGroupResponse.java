@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @SuperBuilder
-public class QuizGroupResponse extends ServiceResponse {
+public class QuizGroupResponse {
 
     List<QuizGroupWithUserData> quizGroupWithUserDataList;
 

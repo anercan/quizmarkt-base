@@ -13,7 +13,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 @SuperBuilder
 @Data
-public class QuizLightResponse extends ServiceResponse {
+public class QuizLightResponse {
     private Long id;
     private String name;
     private Map<String, String> attributes;

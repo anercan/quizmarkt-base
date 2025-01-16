@@ -10,5 +10,6 @@ public class CacheConstants {
     public static final String USER_INFO = "user_info";
     public static final String QUIZ_LIST = "quiz_list";
     public static final String USER_DATA = "user_data";
+    public static final String USER_QUIZ_LIST = "user_quiz_list";
 
 }

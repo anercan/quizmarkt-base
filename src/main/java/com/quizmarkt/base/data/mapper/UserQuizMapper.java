@@ -5,7 +5,7 @@ import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.entity.UserWrongAnswer;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
-import com.quizmarkt.base.data.response.UserQuizInListResponse;
+import com.quizmarkt.base.data.response.SolvedQuizListResponse;
 import com.quizmarkt.base.data.response.UserQuizResponse;
 import com.quizmarkt.base.data.response.UserWrongAnswerResponse;
 import org.mapstruct.Mapper;
@@ -21,7 +21,7 @@ public interface UserQuizMapper {
 
     UserQuizResponse toUserQuizResponse(UserQuiz userQuiz);
 
-    UserQuizInListResponse toUserQuizListResponse(UserQuiz userQuiz);
+    SolvedQuizListResponse toUserQuizListResponse(UserQuiz userQuiz);
 
     List<UserWrongAnswerResponse> toListUserWrongAnswerResponse(List<UserWrongAnswer> userWrongAnswerList);
 

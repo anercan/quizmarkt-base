@@ -13,6 +13,6 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
-public class UserQuizListResponse extends ServiceResponse {
-    List<UserQuizInListResponse> userQuizResponseList;
+public class UserQuizListResponse {
+    List<SolvedQuizListResponse> userQuizResponseList;
 }
