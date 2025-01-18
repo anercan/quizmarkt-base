@@ -43,4 +43,5 @@ jobs:
             docker rm quizmarkt || true
             cd docker-compose-files/
             docker pull ${{ secrets.DOCKER_USERNAME }}/quizmarkt-backend:latest
+            docker image prune -f
             docker-compose up -d
