@@ -7,6 +7,7 @@ import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.mapper.QuestionMapper;
 import com.quizmarkt.base.data.mapper.QuizGroupMapper;
 import com.quizmarkt.base.data.mapper.QuizMapper;
+import com.quizmarkt.base.data.repository.AnswerRepository;
 import com.quizmarkt.base.data.repository.QuestionRepository;
 import com.quizmarkt.base.data.repository.QuizGroupRepository;
 import com.quizmarkt.base.data.repository.QuizRepository;
@@ -42,6 +43,7 @@ public class AdminCRUDService {
     protected static final Logger logger = LoggerFactory.getLogger(AdminCRUDService.class);
 
     private final QuizRepository quizRepository;
+    private final AnswerRepository answerRepository;
     private final QuizGroupRepository quizGroupRepository;
     private final QuizMapper quizMapper;
     private final QuestionRepository questionRepository;
@@ -179,5 +181,85 @@ public class AdminCRUDService {
             quizRepository.save(quiz);
         }
     }
+
+    /*public ResponseEntity<Void> generateMixed(GenerateMixedQuiz request) {
+        List<QuizGroup> quizGroupList = quizGroupRepository.findAllByAppId(request.getAppId(), org.springframework.data.domain.PageRequest.of(0, 10));
+        Optional<QuizGroup> mixedGroupOpt = quizGroupList.stream().filter(quizGroup -> quizGroup.getTitle().contains("Mixed")).findFirst();
+        if (mixedGroupOpt.isPresent()) {
+            Long mixedGroupId = mixedGroupOpt.get().getId();
+            List<Question> allQuestions = questionRepository.findAll();
+
+            // Mixed grubundaki quizleri al
+            List<Quiz> mixedQuizzes = quizRepository.findAllByQuizGroupListContaining(new QuizGroup(mixedGroupId));
+
+            // Mixed grubundaki soruların ID'lerini topla
+            Set<Long> mixedQuestionIds = mixedQuizzes.stream()
+                    .flatMap(quiz -> quiz.getQuestionList().stream())
+                    .map(Question::getId)
+                    .collect(Collectors.toSet());
+
+            // Mixed grubunda olmayan soruları filtrele
+            List<Question> availableQuestions = allQuestions.stream()
+                    .filter(question -> !mixedQuestionIds.contains(question.getId()))
+                    .collect(Collectors.toList());
+
+            // İstenen sayıda rastgele soru seç
+            Collections.shuffle(availableQuestions);
+            List<Question> selectedQuestions = availableQuestions.stream()
+                    .limit(request.getQuestionSize())
+                    .collect(Collectors.toList());
+
+            AtomicInteger atomicInteger = new AtomicInteger(0);
+            List<Question> clonedQuestions = selectedQuestions.stream().map(originalQuestion -> {
+                Question newQuestion = new Question();
+                newQuestion.setCreatedBy("Generated");
+                newQuestion.setCreatedDate(ZonedDateTime.now());
+                newQuestion.setCorrectAnswerId(originalQuestion.getCorrectAnswerId());
+                newQuestion.setActive(true);
+                newQuestion.setExplanation(originalQuestion.getExplanation());
+                newQuestion.setPriority(atomicInteger.getAndIncrement());
+                newQuestion.setContent(originalQuestion.getContent());
+                newQuestion.setCorrectAnswerId(originalQuestion.getCorrectAnswerId());
+                newQuestion.setAttributes(new HashMap<>(originalQuestion.getAttributes()));
+                List<Answer> newAnswers = originalQuestion.getAnswersList().stream().map(originalAnswer -> {
+                    Answer newAnswer = new Answer();
+                    newAnswer.setCreatedBy("Generated");
+                    newAnswer.setCreatedDate(ZonedDateTime.now());
+                    newAnswer.setContent(originalAnswer.getContent());
+                    newAnswer.setImgUrl(originalAnswer.getImgUrl());
+                    return newAnswer;
+                }).collect(Collectors.toList());
+                answerRepository.saveAll(newAnswers);
+                newQuestion.setAnswersList(newAnswers);
+                return newQuestion;
+            }).collect(Collectors.toList());
+
+            for (Question selectedQuestion:selectedQuestions) {
+                String correctAnswerContent = selectedQuestion.getAnswersList().stream().filter(answer -> answer.getId().equals(selectedQuestion.getCorrectAnswerId())).findFirst().map(Answer::getContent).get();
+                Answer correctOne = selectedQuestion.getAnswersList().stream().filter(answer -> answer.getContent().equals(correctAnswerContent)).findFirst().get();
+                for (Question clone: clonedQuestions) {
+                    if (clone.getContent().equals(selectedQuestion.getContent())) {
+                        clone.setCorrectAnswerId(correctOne.getId());
+                    }
+                }
+            }
+
+            questionRepository.saveAll(clonedQuestions);
+
+            // Yeni bir quiz oluştur
+            Quiz newQuiz = new Quiz();
+            newQuiz.setCreatedBy("Generated");
+            newQuiz.setCreatedDate(ZonedDateTime.now());
+            newQuiz.setName("Generated Mixed Quiz");
+            newQuiz.setQuizGroupList(Collections.singletonList(mixedGroupOpt.get()));
+            newQuiz.setQuestionList(clonedQuestions);
+            newQuiz.setAvailablePremiumTypes(Collections.singletonList(PremiumType.NONE));
+            newQuiz.setActiveQuestionCount(request.getQuestionSize());
+            newQuiz.setAppId(request.getAppId());
+            newQuiz.setPriority(0);
+            quizRepository.save(newQuiz);
+        }
+        return ResponseEntity.ok().build();
+    }*/
 
 }

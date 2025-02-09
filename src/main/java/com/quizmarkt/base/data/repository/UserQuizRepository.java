@@ -23,7 +23,7 @@ public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
     List<UserQuiz> findAllByAppIdAndUserIdAndQuizGroupIdIn(int appId, String userId, Set<Long> quizGroupId);
 
     @EntityGraph(attributePaths = "wrongQuestionList")
-    Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, String userId);
+    Optional<UserQuiz> findByQuiz_IdAndUserIdAndState(Long quizId, String userId,UserQuizState state);
 
     @EntityGraph(attributePaths = "wrongQuestionList")
     List<UserQuiz> findByQuiz_Id(Long quizId);

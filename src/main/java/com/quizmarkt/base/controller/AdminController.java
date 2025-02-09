@@ -8,6 +8,7 @@ import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.data.request.admin.GenerateMixedQuiz;
 import com.quizmarkt.base.service.AdminCRUDService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -56,4 +57,10 @@ public class AdminController {
     public ResponseEntity<Void> getQuizGroupList(@RequestBody CreateOrUpdateQuestion request) {
         return adminService.saveQuestion(request);
     }
+
+    @PostMapping("/generate-mixed")
+    public ResponseEntity<Void> generateMixed(@RequestBody GenerateMixedQuiz request) {
+        return null;
+    }
+
 }
