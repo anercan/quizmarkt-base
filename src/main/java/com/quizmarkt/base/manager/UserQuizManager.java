@@ -62,7 +62,7 @@ public class UserQuizManager extends BaseManager {
 
     public Optional<UserQuiz> getUserQuizWithQuizIdAndUserId(Long quizId) {
         try {
-            return userQuizRepository.findByQuiz_IdAndUserIdAndState(quizId, getUserId(), UserQuizState.COMPLETED); //todo cachelersek getQuizWithUserQuizDataForStartTest evict etmeli gibi
+            return userQuizRepository.findByQuiz_IdAndUserId(quizId, getUserId()); //todo cachelersek getQuizWithUserQuizDataForStartTest evict etmeli gibi
         } catch (Exception e) {
             logger.error("getUserQuizWithQuizIdAndUserId got exception.userId:{} quizId:{}", getUserId(), quizId, e);
             return Optional.empty();
