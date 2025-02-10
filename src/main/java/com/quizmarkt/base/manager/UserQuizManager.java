@@ -69,6 +69,15 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
+    public Optional<UserQuiz> getUserQuizWithQuizIdAndUserIdCompleted(Long quizId) {
+        try {
+            return userQuizRepository.findByQuiz_IdAndUserIdAndState(quizId, getUserId(),UserQuizState.COMPLETED);
+        } catch (Exception e) {
+            logger.error("getUserQuizWithQuizIdAndUserIdCompleted got exception.userId:{} quizId:{}", getUserId(), quizId, e);
+            return Optional.empty();
+        }
+    }
+
     public List<UserQuiz> getUserQuizWithQuizId(Long quizId) {
         try {
             return userQuizRepository.findByQuiz_Id(quizId);

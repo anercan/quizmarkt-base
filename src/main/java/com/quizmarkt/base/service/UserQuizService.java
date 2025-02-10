@@ -67,7 +67,7 @@ public class UserQuizService extends BaseService {
             int better = 0;
             int worse = 0;
             int equal = 0;
-            Optional<UserQuiz> completedUserQuizOpt = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
+            Optional<UserQuiz> completedUserQuizOpt = userQuizManager.getUserQuizWithQuizIdAndUserIdCompleted(quizId);
             if (completedUserQuizOpt.isPresent()) {
                 List<UserQuiz> otherUserQuizzes = userQuizManager.getUserQuizWithQuizId(quizId);
                 for (UserQuiz otherUserQuiz : otherUserQuizzes) {
