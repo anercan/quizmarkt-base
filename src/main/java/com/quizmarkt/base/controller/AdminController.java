@@ -70,7 +70,7 @@ public class AdminController {
     @ModelAttribute
     public void before() {
         Claims claims = JwtUtil.getClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
-        if ((claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
+        if (!(claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
             throw new RuntimeException("Invalid admin request");
         }
     }
