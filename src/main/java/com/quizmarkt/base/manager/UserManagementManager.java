@@ -3,6 +3,7 @@ package com.quizmarkt.base.manager;
 import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
+import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.data.response.UserManagementSignInResponse;
@@ -71,6 +72,22 @@ public class UserManagementManager extends BaseManager {
             }
         } catch (Exception e) {
             logger.error("getUserInfo failed for with cause:", e);
+            return null;
+        }
+    }
+
+    public String adminLogin(SignInRequest request) {
+        try {
+            String endpoint = userManagementServiceEndpoint + "/user-management/sign-in/admin";
+            ResponseEntity<UserManagementSignInResponse> userManagementSignInResponse = userManagementRestTemplate.postForEntity(endpoint, request, UserManagementSignInResponse.class);
+            if (userManagementSignInResponse.getStatusCode().is2xxSuccessful() && userManagementSignInResponse.getBody() != null) {
+                return userManagementSignInResponse.getBody().getJwt();
+            } else {
+                logger.warn("adminLogin has not succeed token:{}", request.getEmail());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("adminLogin failed for token:{} with cause:", request.getEmail(), e);
             return null;
         }
     }

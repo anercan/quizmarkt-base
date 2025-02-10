@@ -23,7 +23,7 @@ public class JwtFilter implements Filter {
 
         String path = httpRequest.getRequestURI();
         if (canSkipFilter(path)) {
-            log.warn("JWT filter will skipped for req:{}", request);
+            log.warn("JWT filter will skipped for req:{}", ((HttpServletRequest) request).getPathInfo());
             chain.doFilter(request, response);
             return;
         }
@@ -53,7 +53,7 @@ public class JwtFilter implements Filter {
     }
 
     private boolean canSkipFilter(String path) {
-        return path.contains("google-sign-in") || path.contains("start-app") || path.contains("/admin") || path.contains("swagger") || path.contains("api-docs");
+        return path.contains("google-sign-in") || path.contains("swagger") || path.contains("api-docs");
     }
 
     @Override

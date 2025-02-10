@@ -13,10 +13,12 @@ import com.quizmarkt.base.data.repository.QuizGroupRepository;
 import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
+import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateAnswer;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.manager.CacheProviderManager;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -50,6 +52,12 @@ public class AdminCRUDService {
     private final QuestionMapper questionMapper;
     private final QuizGroupMapper quizGroupMapper;
     private final CacheProviderManager cacheProviderManager;
+    private final UserManagementService userManagementService;
+
+    public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
+       ResponseEntity<JwtResponse> response =  userManagementService.adminLogin(request);
+       return ResponseEntity.ok(response.getBody());
+    }
 
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
         cacheProviderManager.evictQuizRelatedCaches();

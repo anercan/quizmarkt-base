@@ -5,11 +5,15 @@ import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
+import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
-import com.quizmarkt.base.data.request.admin.GenerateMixedQuiz;
+import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.service.AdminCRUDService;
+import com.quizmarkt.base.util.JwtUtil;
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +28,14 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
-    //todo role based
 
     private final AdminCRUDService adminService;
+    private final HttpServletRequest httpServletRequest;
+
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> getQuizGroupList(@RequestBody SignInRequest request) {
+        return adminService.adminLogin(request);
+    }
 
     @PostMapping("/get-quiz-groups")
     public ResponseEntity<List<QuizGroup>> getQuizGroupList(@RequestBody PageRequest request) {
@@ -58,9 +67,11 @@ public class AdminController {
         return adminService.saveQuestion(request);
     }
 
-    @PostMapping("/generate-mixed")
-    public ResponseEntity<Void> generateMixed(@RequestBody GenerateMixedQuiz request) {
-        return null;
+    @ModelAttribute
+    public void before() {
+        Claims claims = JwtUtil.getClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
+        if ((claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
+            throw new RuntimeException("Invalid admin request");
+        }
     }
-
 }

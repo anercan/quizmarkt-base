@@ -4,6 +4,7 @@ import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
+import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.manager.UserManagementManager;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @author anercan
@@ -59,6 +61,18 @@ public class UserManagementService extends BaseService {
         } catch (Exception e) {
             logger.error("googlePlaySubscribe got exception.", e);
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
+        HashMap<String, String> jwtClaims = new HashMap<>();
+        jwtClaims.put("ROLE","ADMIN");
+        request.setJwtClaims(jwtClaims);
+        String jwt = userManagementManager.adminLogin(request);
+        if (StringUtils.isNotEmpty(jwt)) {
+            return ResponseEntity.ok(JwtResponse.builder().jwt(jwt).build());
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 }
