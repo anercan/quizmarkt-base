@@ -87,7 +87,7 @@ public class UserManagementManager extends BaseManager {
                 return null;
             }
         } catch (Exception e) {
-            logger.error("adminLogin failed for token:{} with cause:", request.getEmail(), e);
+            logger.error("adminLogin failed for username:{} with cause:", request.getEmail());
             return null;
         }
     }

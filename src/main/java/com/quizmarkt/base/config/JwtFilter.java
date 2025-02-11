@@ -23,7 +23,7 @@ public class JwtFilter implements Filter {
 
         String path = httpRequest.getRequestURI();
         if (canSkipFilter(path)) {
-            log.warn("JWT filter will skipped for req:{}", ((HttpServletRequest) request).getPathInfo());
+            log.warn("JWT filter will skipped for req:{}", path);
             chain.doFilter(request, response);
             return;
         }
@@ -48,6 +48,8 @@ public class JwtFilter implements Filter {
         } catch (Exception ex) {
             log.warn("UNAUTHORIZED operation req:{}", httpRequest);
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            UserContextHolder.clear();
+        } finally {
             UserContextHolder.clear();
         }
     }
