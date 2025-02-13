@@ -6,6 +6,10 @@ server:
     context-path: ${SERVLET_CONTEXT_PATH:/quizmarkt-base}
   port: ${SERVER_PORT}
 
+logging:
+  pattern:
+    console: ${SERVER_LOG_FORMAT:%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5level %msg%n}
+
 spring:
   cache:
     type: caffeine

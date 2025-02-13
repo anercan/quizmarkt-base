@@ -46,7 +46,7 @@ public class JwtFilter implements Filter {
                 UserContextHolder.clear();
             }
         } catch (Exception ex) {
-            log.warn("UNAUTHORIZED operation req:{}", httpRequest);
+            log.warn("UNAUTHORIZED operation req:{}", path);
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             UserContextHolder.clear();
         } finally {

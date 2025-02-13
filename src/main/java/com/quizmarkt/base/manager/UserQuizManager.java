@@ -156,7 +156,7 @@ public class UserQuizManager extends BaseManager {
             }
             userQuiz.setCompleteDate(ZonedDateTime.now());
             UserQuiz updatedQuiz = userQuizRepository.save(userQuiz);
-            logger.info("userQuiz updated userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId());
+            logger.debug("userQuiz updated userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId());
             return updatedQuiz;
         } catch (Exception e) {
             logger.error("updateUserQuiz got exception.userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId(), e);
