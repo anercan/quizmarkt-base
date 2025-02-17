@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.request;
 
+import com.quizmarkt.base.data.enums.OSType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,10 @@ public class SignInRequest {
     private Date expirationDate;
     private int appId;
     private SignInType signInType;
+
+    @Data
+    public static class DeviceInfo {
+        String token;
+        OSType osType;
+    }
 }
