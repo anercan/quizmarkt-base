@@ -24,6 +24,7 @@ public class SignInRequest {
     private Date expirationDate;
     private int appId;
     private SignInType signInType;
+    private DeviceInfo deviceInfo;
 
     @Data
     public static class DeviceInfo {
