@@ -1,6 +1,5 @@
 package com.quizmarkt.base.data.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.quizmarkt.base.data.enums.OSType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +29,6 @@ public class SignInRequest {
     @Data
     public static class DeviceInfo {
         private String token;
-        @JsonProperty("osType")
         private OSType osType;
     }
 }

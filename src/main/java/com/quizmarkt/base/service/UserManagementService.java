@@ -29,7 +29,7 @@ public class UserManagementService extends BaseService {
     private final UserManagementManager userManagementManager;
 
     public ResponseEntity<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
-        String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getToken(), request.getAppId()));
+        String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(),request.getToken(), request.getAppId()));
         if (StringUtils.isNotEmpty(jwt)) {
             return ResponseEntity.ok(JwtResponse.builder().jwt(jwt).build());
         } else {
@@ -37,10 +37,11 @@ public class UserManagementService extends BaseService {
         }
     }
 
-    private GoogleLoginRequest getGoogleLoginRequest(String token, int appId) {
+    private GoogleLoginRequest getGoogleLoginRequest(SignInRequest.DeviceInfo deviceInfo, String token, int appId) {
         GoogleLoginRequest request = new GoogleLoginRequest();
         request.setExpirationDate(Date.from(LocalDate.now().plusDays(28).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         request.setAppId(appId);
+        request.setDeviceInfo(deviceInfo);
         request.setToken(token);
         return request;
     }

@@ -1,6 +1,5 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
@@ -41,15 +40,6 @@ public class UserQuizService extends BaseService {
                 .userQuizResponseList(userQuizInListResponses)
                 .build());
     }
-
-    private String getQuizGroupNameFromUserQuiz(UserQuiz userQuiz, Long quizGroupId) {
-        return userQuiz.getQuiz().getQuizGroupList()
-                .stream()
-                .filter(quizGroup -> quizGroup.getId().equals(quizGroupId))
-                .findFirst().map(QuizGroup::getTitle)
-                .orElse(null);
-    }
-
 
     public ResponseEntity<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {
         Optional<UserQuiz> optionalUserQuiz = userQuizManager.getUserQuizWithQuizIdAndUserId(request.getQuizId());

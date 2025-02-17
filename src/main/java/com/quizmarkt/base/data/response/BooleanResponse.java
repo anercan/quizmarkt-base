@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @SuperBuilder
-public class BooleanResponse extends ServiceResponse {
+public class BooleanResponse {
     boolean value;
 }
