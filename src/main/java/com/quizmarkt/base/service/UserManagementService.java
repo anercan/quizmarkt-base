@@ -7,6 +7,7 @@ import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
+import com.quizmarkt.base.manager.CacheProviderManager;
 import com.quizmarkt.base.manager.UserManagementManager;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 public class UserManagementService extends BaseService {
 
     private final UserManagementManager userManagementManager;
+    private final CacheProviderManager cacheProviderManager;
 
     public ResponseEntity<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
         String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(),request.getToken(), request.getAppId()));
@@ -55,6 +57,8 @@ public class UserManagementService extends BaseService {
         try {
             UpdatePremiumInfoResponse updatePremiumInfoResponse = userManagementManager.googlePlaySubscribe(premiumInfoRequest);
             if (updatePremiumInfoResponse != null && updatePremiumInfoResponse.isSucceed()) {
+                cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), false);
+                cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), true);
                 return ResponseEntity.ok(JwtResponse.builder().jwt(updatePremiumInfoResponse.getJwt()).build());
             }
             logger.warn("googlePlaySubscribe returned fail from userManagementManager message:{} userId:{}", updatePremiumInfoResponse.getMessage() != null ? updatePremiumInfoResponse.getMessage() : "", getUserId());

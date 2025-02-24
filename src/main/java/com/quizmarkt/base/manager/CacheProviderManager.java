@@ -23,7 +23,6 @@ public class CacheProviderManager extends BaseManager {
 
     @CacheEvict(value = CacheConstants.USER_QUIZ_LIST, key = "#appId + #userId")
     public void evictUserQuizListCache(String userId, Integer appId) {
-        cacheManager.getCache(CacheConstants.USER_QUIZ_LIST);
         // This method is used to evict the USER_QUIZ_LIST cache
     }
 
