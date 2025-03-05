@@ -1,6 +1,7 @@
 package com.quizmarkt.base.controller;
 
 import com.quizmarkt.base.data.request.QuizGroupRequest;
+import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.QuizGroupResponse;
 import com.quizmarkt.base.service.QuizGroupService;
 import lombok.AllArgsConstructor;
@@ -17,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/quiz-group")
-public class QuizGroupController {
+public class QuizGroupController extends BaseController {
 
     private final QuizGroupService quizGroupService;
 
     @PostMapping("/get-quiz-groups-with-user-quiz-data")
-    public ResponseEntity<QuizGroupResponse> getQuizGroupsWithUserData(@RequestBody QuizGroupRequest request) {
-        return quizGroupService.getQuizGroupsWithUserInfo(request);
+    public ResponseEntity<ApiResponse<QuizGroupResponse>> getQuizGroupsWithUserData(@RequestBody QuizGroupRequest request) {
+        return respond(quizGroupService.getQuizGroupsWithUserInfo(request));
     }
 }

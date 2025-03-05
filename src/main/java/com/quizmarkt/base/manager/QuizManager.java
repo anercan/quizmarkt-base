@@ -33,6 +33,7 @@ public class QuizManager extends BaseManager {
         }
     }
 
+    //todo cacheable olabilir app sayısına göre en cok acılan 20 tane vs cachede durur
     public Optional<Quiz> getQuizWithIdQuestionsSorted(Long quizId) {
         try {
             return quizRepository.findQuizWithQuestionsSorted(quizId);

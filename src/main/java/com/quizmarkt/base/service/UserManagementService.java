@@ -5,6 +5,7 @@ import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
 import com.quizmarkt.base.data.request.PremiumInfoRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
+import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.manager.CacheProviderManager;
@@ -30,12 +31,12 @@ public class UserManagementService extends BaseService {
     private final UserManagementManager userManagementManager;
     private final CacheProviderManager cacheProviderManager;
 
-    public ResponseEntity<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
-        String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(),request.getToken(), request.getAppId()));
+    public ApiResponse<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
+        String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(), request.getToken(), request.getAppId()));
         if (StringUtils.isNotEmpty(jwt)) {
-            return ResponseEntity.ok(JwtResponse.builder().jwt(jwt).build());
+            return new ApiResponse<>(JwtResponse.builder().jwt(jwt).build());
         } else {
-            return ResponseEntity.badRequest().build();
+            return new ApiResponse<>(ApiResponse.Status.fail("Login failed!"));
         }
     }
 
@@ -48,7 +49,7 @@ public class UserManagementService extends BaseService {
         return request;
     }
 
-    public ResponseEntity<JwtResponse> googlePlaySubscribe(GoogleSubscriptionRequest googleSubscriptionRequest) {
+    public ApiResponse<JwtResponse> googlePlaySubscribe(GoogleSubscriptionRequest googleSubscriptionRequest) {
         PremiumInfoRequest premiumInfoRequest = new PremiumInfoRequest();
         premiumInfoRequest.setGoogleSubscriptionRequest(googleSubscriptionRequest);
         premiumInfoRequest.setPremiumType(PremiumType.LEVEL1);
@@ -59,19 +60,19 @@ public class UserManagementService extends BaseService {
             if (updatePremiumInfoResponse != null && updatePremiumInfoResponse.isSucceed()) {
                 cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), false);
                 cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), true);
-                return ResponseEntity.ok(JwtResponse.builder().jwt(updatePremiumInfoResponse.getJwt()).build());
+                return new ApiResponse<>(JwtResponse.builder().jwt(updatePremiumInfoResponse.getJwt()).build());
             }
             logger.warn("googlePlaySubscribe returned fail from userManagementManager message:{} userId:{}", updatePremiumInfoResponse.getMessage() != null ? updatePremiumInfoResponse.getMessage() : "", getUserId());
-            return ResponseEntity.internalServerError().build();
+            return new ApiResponse<>(ApiResponse.Status.fail("Failed Subscription"));
         } catch (Exception e) {
             logger.error("googlePlaySubscribe got exception.", e);
-            return ResponseEntity.internalServerError().build();
+            return new ApiResponse<>(ApiResponse.Status.fail());
         }
     }
 
     public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
         HashMap<String, String> jwtClaims = new HashMap<>();
-        jwtClaims.put("ROLE","ADMIN");
+        jwtClaims.put("ROLE", "ADMIN");
         request.setJwtClaims(jwtClaims);
         String jwt = userManagementManager.adminLogin(request);
         if (StringUtils.isNotEmpty(jwt)) {

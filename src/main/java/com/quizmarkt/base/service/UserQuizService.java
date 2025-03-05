@@ -3,13 +3,9 @@ package com.quizmarkt.base.service;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
-import com.quizmarkt.base.data.response.BooleanResponse;
-import com.quizmarkt.base.data.response.CompletedStaticsResponse;
-import com.quizmarkt.base.data.response.SolvedQuizListResponse;
-import com.quizmarkt.base.data.response.UserQuizListResponse;
+import com.quizmarkt.base.data.response.*;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,7 +24,7 @@ public class UserQuizService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final UserQuizMapper userQuizMapper;
 
-    public ResponseEntity<UserQuizListResponse> getUserQuizList() {
+    public ApiResponse<UserQuizListResponse> getUserQuizList() {
         List<SolvedQuizListResponse> userQuizInListResponses = new ArrayList<>();
         List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();
         for (UserQuiz userQuiz : userQuizList) {
@@ -36,23 +32,23 @@ public class UserQuizService extends BaseService {
             //userQuizInListResponse.setQuizGroupName(getQuizGroupNameFromUserQuiz(userQuiz, quizGroupId));
             userQuizInListResponses.add(userQuizInListResponse);
         }
-        return ResponseEntity.ok(UserQuizListResponse.builder()
+        return new ApiResponse<>(UserQuizListResponse.builder()
                 .userQuizResponseList(userQuizInListResponses)
                 .build());
     }
 
-    public ResponseEntity<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {
+    public ApiResponse<BooleanResponse> createUpdateUserQuiz(CreateUpdateUserQuizRequest request) {
         Optional<UserQuiz> optionalUserQuiz = userQuizManager.getUserQuizWithQuizIdAndUserId(request.getQuizId());
         if (optionalUserQuiz.isEmpty()) {
             UserQuiz userQuiz = userQuizManager.createNewUserQuiz(request);
-            return ResponseEntity.ok(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
+            return new ApiResponse<>(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
         } else {
             UserQuiz userQuiz = userQuizManager.updateUserQuiz(request, optionalUserQuiz.get());
-            return ResponseEntity.ok(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
+            return new ApiResponse<>(BooleanResponse.builder().value(Objects.nonNull(userQuiz)).build());
         }
     }
 
-    public ResponseEntity<CompletedStaticsResponse> getCompletedQuizStatics(Long quizId) {
+    public ApiResponse<CompletedStaticsResponse> getCompletedQuizStatics(Long quizId) {
         try {
             int better = 0;
             int worse = 0;
@@ -69,12 +65,12 @@ public class UserQuizService extends BaseService {
                         worse++;
                     }
                 }
-                return ResponseEntity.ok(CompletedStaticsResponse.builder().betterCount(better).equalCount(equal).worseCount(worse).build());
+                return new ApiResponse<>(CompletedStaticsResponse.builder().betterCount(better).equalCount(equal).worseCount(worse).build());
             }
         } catch (Exception e) {
             logger.error("getCompletedQuizStatics got exception", e);
-            return ResponseEntity.internalServerError().build();
+            return new ApiResponse<>(ApiResponse.Status.fail());
         }
-        return ResponseEntity.internalServerError().build();
+        return new ApiResponse<>(ApiResponse.Status.fail());
     }
 }

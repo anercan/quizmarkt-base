@@ -1,0 +1,45 @@
+package com.quizmarkt.base.data.response;
+
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ * @author anercan
+ */
+
+@Data
+public class ApiResponse <T>{
+    private T data;
+    private Status status;
+
+    public ApiResponse(T data) {
+        this.data = data;
+    }
+
+    public ApiResponse(Status status) {
+        this.status = status;
+    }
+
+    @Data
+    @Builder
+    public static class Status {
+        private static final int FAIL_WITH_MESSAGE = -1;
+        private static final int FAIL_WITHOUT_MESSAGE = -2;
+        private static final int UNAUTHORIZED_PREMIUM_OPERATION = -3;
+
+        private int code;
+        private String message;
+
+        public static Status fail(String message) {
+            return new Status(FAIL_WITH_MESSAGE, message);
+        }
+
+        public static Status fail() {
+            return new Status(FAIL_WITHOUT_MESSAGE, null);
+        }
+
+        public static Status notAuthorizedPremiumOperation() {
+            return new Status(UNAUTHORIZED_PREMIUM_OPERATION, null);
+        }
+    }
+}

@@ -1,6 +1,7 @@
 package com.quizmarkt.base.controller;
 
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
+import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.QuizListResponse;
 import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.service.QuizService;
@@ -15,17 +16,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/quiz")
-public class QuizController {
+public class QuizController extends BaseController {
 
     private final QuizService quizService;
 
     @PostMapping("/get-quizzes-with-user-data")
-    public ResponseEntity<QuizListResponse> getQuizListWithUserData(@RequestBody QuizListWithUserDataRequest request) {
-        return quizService.getQuizListWithUserData(request);
+    public ResponseEntity<ApiResponse<QuizListResponse>> getQuizListWithUserData(@RequestBody QuizListWithUserDataRequest request) {
+        return respond(quizService.getQuizListWithUserData(request));
     }
 
     @GetMapping("/get-quiz-with-id/{quizId}")
-    public ResponseEntity<QuizResponse> getQuizWithUserQuizDataForStartTest(@PathVariable String quizId) {
-        return quizService.getQuizWithUserQuizDataForStartTest(Long.parseLong(quizId));
+    public ResponseEntity<ApiResponse<QuizResponse>> getQuizWithUserQuizDataForStartTest(@PathVariable String quizId) {
+        return respond(quizService.getQuizWithUserQuizDataForStartTest(Long.parseLong(quizId)));
     }
 }
