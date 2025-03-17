@@ -19,6 +19,8 @@ public class CorsConfigurerConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .maxAge(3600)
+                        .allowedOrigins("https://anercan.github.io/","http://localhost:3000/")
+                        .exposedHeaders("Authorization")
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "OPTIONS");
             }
         };
