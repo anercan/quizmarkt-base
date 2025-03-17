@@ -46,7 +46,7 @@ public class QuizService extends BaseService {
         }
         if (!quizWithId.get().getAvailablePremiumTypes().contains(getPremiumType())) {
             logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
-            return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation());
+            return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getQuizListWithUserData"));
         }
         QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);

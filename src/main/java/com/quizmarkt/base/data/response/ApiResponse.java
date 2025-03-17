@@ -43,8 +43,8 @@ public class ApiResponse <T>{
             return new Status(FAIL_WITHOUT_MESSAGE, null);
         }
 
-        public static Status notAuthorizedPremiumOperation() {
-            return new Status(UNAUTHORIZED_PREMIUM_OPERATION, null);
+        public static Status notAuthorizedPremiumOperation(String operationName) {
+            return new Status(UNAUTHORIZED_PREMIUM_OPERATION, operationName);
         }
     }
 }

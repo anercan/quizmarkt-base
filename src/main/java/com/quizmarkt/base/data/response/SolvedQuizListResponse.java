@@ -18,7 +18,6 @@ public class SolvedQuizListResponse {
     private UserQuizState state;
     private ZonedDateTime completeDate;
     private Long quizGroupId;
-    //private String quizGroupName;
     private LightQuizResponse quiz;
     private List<Long> correctQuestionList;
     private List<WrongAnswerResponse> wrongQuestionList;

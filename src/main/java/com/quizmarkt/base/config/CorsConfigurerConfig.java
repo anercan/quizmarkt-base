@@ -20,7 +20,7 @@ public class CorsConfigurerConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("http://localhost:3000", "https://anercan.github.io")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("Authorization", "Content-Type", "*")
+                        .allowedHeaders("Authorization", "Content-Type", "referer", "referrer-policy")
                         .allowCredentials(true)
                         .maxAge(3600);
             }
