@@ -18,11 +18,8 @@ public class CorsConfigurerConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "https://anercan.github.io")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("Authorization", "Content-Type", "referer", "referrer-policy")
-                        .allowCredentials(true)
-                        .maxAge(3600);
+                        .maxAge(3600)
+                        .allowedMethods("HEAD", "GET", "PUT", "POST", "OPTIONS");
             }
         };
     }

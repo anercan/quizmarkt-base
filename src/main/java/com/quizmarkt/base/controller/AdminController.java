@@ -33,7 +33,7 @@ public class AdminController {
     private final HttpServletRequest httpServletRequest;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> getQuizGroupList(@RequestBody SignInRequest request) {
+    public ResponseEntity<JwtResponse> adminLogin(@RequestBody SignInRequest request) {
         return adminService.adminLogin(request);
     }
 
