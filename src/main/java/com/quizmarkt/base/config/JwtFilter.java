@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 
@@ -21,11 +20,6 @@ public class JwtFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        if (HttpMethod.OPTIONS.matches(httpRequest.getMethod())) {
-            httpResponse.setStatus(HttpServletResponse.SC_OK);
-            return;
-        }
 
         String path = httpRequest.getRequestURI();
         if (canSkipFilter(path)) {
