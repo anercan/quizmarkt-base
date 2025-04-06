@@ -2,7 +2,6 @@ app:
   version: 1
 
 server:
-  forward-headers-strategy: native
   servlet:
     context-path: ${SERVLET_CONTEXT_PATH:/quizmarkt-base}
   port: ${SERVER_PORT}
