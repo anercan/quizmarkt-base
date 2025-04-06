@@ -21,7 +21,6 @@ public class CorsConfigurerConfig {
                         .maxAge(3600)
                         .allowedOrigins("https://anercan.github.io/","http://localhost:3000/")
                         .exposedHeaders("Authorization")
-                        .allowCredentials(true)
                         .allowedMethods("HEAD", "GET", "PUT", "POST", "OPTIONS");
             }
         };
