@@ -22,14 +22,8 @@ public class JwtFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if (HttpMethod.OPTIONS.matches(httpRequest.getMethod())) {
-            respondOptions(httpResponse);
-            return;
-        }
-
-        String path = httpRequest.getRequestURI();
-        if (canSkipFilter(path)) {
-            log.warn("JWT filter will skipped for req:{}", path);
+        if (canSkipFilter(httpRequest)) {
+            log.warn("JWT filter will skipped for req:{}", httpRequest.getRequestURI());
             chain.doFilter(request, response);
             return;
         }
@@ -52,7 +46,7 @@ public class JwtFilter implements Filter {
                 UserContextHolder.clear();
             }
         } catch (Exception ex) {
-            log.warn("UNAUTHORIZED operation req:{}", path);
+            log.warn("UNAUTHORIZED operation req:{}", httpRequest.getRequestURI());
             httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             UserContextHolder.clear();
         } finally {
@@ -60,23 +54,17 @@ public class JwtFilter implements Filter {
         }
     }
 
-    private void respondOptions(HttpServletResponse httpResponse) {
-        httpResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        httpResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        httpResponse.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
-        httpResponse.setHeader("Access-Control-Allow-Credentials", "true");
-        httpResponse.setStatus(HttpServletResponse.SC_OK);
-    }
-
-    private boolean canSkipFilter(String path) {
-        return path.contains("google-sign-in") || path.contains("admin/login") || path.contains("swagger") || path.contains("api-docs");
+    private boolean canSkipFilter(HttpServletRequest httpRequest) {
+        String path = httpRequest.getRequestURI();
+        return HttpMethod.OPTIONS.matches(httpRequest.getMethod()) || path.contains("google-sign-in") || path.contains("admin/login") || path.contains("swagger") || path.contains("api-docs");
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
     public void destroy() {
+        UserContextHolder.clear();
     }
 }
