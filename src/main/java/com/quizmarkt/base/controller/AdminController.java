@@ -6,10 +6,12 @@ import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
+import com.quizmarkt.base.data.request.UserFilterRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import com.quizmarkt.base.data.response.JwtResponse;
+import com.quizmarkt.base.data.response.UserResponse;
 import com.quizmarkt.base.service.AdminCRUDService;
 import com.quizmarkt.base.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -31,6 +33,17 @@ public class AdminController {
 
     private final AdminCRUDService adminService;
     private final HttpServletRequest httpServletRequest;
+
+    @ModelAttribute
+    public void before() {
+        boolean notContainsLogin = !httpServletRequest.getRequestURI().contains("login");
+        if (notContainsLogin) {
+            Claims claims = JwtUtil.getClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
+            if (!(claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
+                throw new RuntimeException("Invalid admin request");
+            }
+        }
+    }
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> adminLogin(@RequestBody SignInRequest request) {
@@ -67,14 +80,8 @@ public class AdminController {
         return adminService.saveQuestion(request);
     }
 
-    @ModelAttribute
-    public void before() {
-        boolean notContainsLogin = !httpServletRequest.getRequestURI().contains("login");
-        if (notContainsLogin) {
-            Claims claims = JwtUtil.getClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
-            if (!(claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
-                throw new RuntimeException("Invalid admin request");
-            }
-        }
+    @PostMapping("/get-users-filter")
+    public ResponseEntity<List<UserResponse>> getFilteredUsers(@RequestBody UserFilterRequest request) {
+        return adminService.getFilteredUsers(request);
     }
 }

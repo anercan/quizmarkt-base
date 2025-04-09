@@ -14,12 +14,15 @@ import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
+import com.quizmarkt.base.data.request.UserFilterRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateAnswer;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import com.quizmarkt.base.data.response.JwtResponse;
+import com.quizmarkt.base.data.response.UserResponse;
 import com.quizmarkt.base.manager.CacheProviderManager;
+import com.quizmarkt.base.manager.UserManagementManager;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +56,7 @@ public class AdminCRUDService {
     private final QuizGroupMapper quizGroupMapper;
     private final CacheProviderManager cacheProviderManager;
     private final UserManagementService userManagementService;
+    private final UserManagementManager userManagementManager;
 
     public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
        ResponseEntity<JwtResponse> response =  userManagementService.adminLogin(request);
@@ -188,6 +192,10 @@ public class AdminCRUDService {
             quiz.setActiveQuestionCount(Integer.parseInt(quiz.getQuestionList().stream().filter(Question::isActive).count() + ""));
             quizRepository.save(quiz);
         }
+    }
+
+    public ResponseEntity<List<UserResponse>> getFilteredUsers(UserFilterRequest request) {
+        return ResponseEntity.ok(userManagementManager.getFilteredUsers(request));
     }
 
     /*public ResponseEntity<Void> generateMixed(GenerateMixedQuiz request) {
