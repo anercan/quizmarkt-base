@@ -20,7 +20,7 @@ public class UserResponse {
     private PremiumInfo premiumInfo;
 
     @Data
-    public static class PremiumInfo {
+    private static class PremiumInfo {
         private PremiumType premiumType;
         private Long expireDate;
         private String subscriptionId;

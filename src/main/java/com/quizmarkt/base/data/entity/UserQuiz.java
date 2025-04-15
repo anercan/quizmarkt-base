@@ -24,6 +24,7 @@ public class UserQuiz {
     private Long id;
     private String userId;
     private UserQuizState state;
+    private ZonedDateTime startDate;
     private ZonedDateTime completeDate;
     private int appId;
     private Long quizGroupId;

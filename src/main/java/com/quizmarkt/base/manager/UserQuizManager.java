@@ -123,7 +123,7 @@ public class UserQuizManager extends BaseManager {
             quiz.setId(request.getQuizId());
             userQuiz.setQuiz(quiz);
             userQuiz.setUserId(getUserId());
-            userQuiz.setCompleteDate(ZonedDateTime.now());
+            userQuiz.setStartDate(ZonedDateTime.now());
             userQuiz.setQuizGroupId(request.getQuizGroupId());
             userQuiz.setAppId(getAppId());
             userQuiz.setState(UserQuizState.ON_GOING);
@@ -153,8 +153,8 @@ public class UserQuizManager extends BaseManager {
             }
             if (UserQuizUtil.isQuizCompleted(userQuiz)) {
                 userQuiz.setState(UserQuizState.COMPLETED);
+                userQuiz.setCompleteDate(ZonedDateTime.now());
             }
-            userQuiz.setCompleteDate(ZonedDateTime.now());
             UserQuiz updatedQuiz = userQuizRepository.save(userQuiz);
             logger.debug("userQuiz updated userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId());
             return updatedQuiz;
