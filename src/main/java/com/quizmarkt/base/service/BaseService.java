@@ -24,6 +24,10 @@ public class BaseService {
         return !PremiumType.NONE.equals(UserContextHolder.getPremiumType());
     }
 
+    protected boolean isNonPremium() {
+        return PremiumType.NONE.equals(UserContextHolder.getPremiumType());
+    }
+
     protected PremiumType getPremiumType() {
         return UserContextHolder.getPremiumType();
     }

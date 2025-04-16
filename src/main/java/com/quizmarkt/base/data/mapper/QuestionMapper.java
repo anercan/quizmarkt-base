@@ -4,6 +4,7 @@ import com.quizmarkt.base.data.entity.Answer;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateAnswer;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
+import com.quizmarkt.base.data.response.QuestionResponse;
 import com.quizmarkt.base.util.MapperUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.Mapper;
@@ -36,7 +37,7 @@ public interface QuestionMapper {
             if (!CollectionUtils.isEmpty(request.getCreateOrUpdateAnswerList())) {
                 List<Answer> answerList = new ArrayList<>();
                 Collections.shuffle(request.getCreateOrUpdateAnswerList());
-                for (CreateOrUpdateAnswer answerReq:request.getCreateOrUpdateAnswerList()) {
+                for (CreateOrUpdateAnswer answerReq : request.getCreateOrUpdateAnswerList()) {
                     Answer answer = new Answer();
                     if (answerReq.getId() != null) {
                         answer.setId(answerReq.getId());
@@ -52,4 +53,7 @@ public interface QuestionMapper {
             return Optional.empty();
         }
     }
+
+    List<QuestionResponse> toQuestionListResponse(List<Question> questionList);
+
 }

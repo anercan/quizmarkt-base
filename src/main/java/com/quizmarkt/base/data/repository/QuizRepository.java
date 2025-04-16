@@ -39,5 +39,4 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
             "ORDER BY q.priority ASC")
     Optional<Quiz> findQuizWithQuestionsSorted(@Param("quizId") Long quizId); // todo check joins entity graph
 
-    List<Quiz> findAllByQuizGroupListContaining(QuizGroup group);
 }
