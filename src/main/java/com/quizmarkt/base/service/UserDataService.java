@@ -61,9 +61,9 @@ public class UserDataService extends BaseService {
 
     private List<ActivityData> getActivityData(List<UserQuiz> userQuizList) {
         try {
-            Map<LocalDate, Long> groupedByDate = userQuizList.stream()
+            Map<LocalDate, Long> groupedByDate = userQuizList.stream().filter(userQuiz -> Objects.nonNull(userQuiz.getStartDate()))
                     .collect(Collectors.groupingBy(
-                            userQuiz -> userQuiz.getCompleteDate().toLocalDate(),
+                            userQuiz -> userQuiz.getStartDate().toLocalDate(),
                             Collectors.counting()
                     ));
 
