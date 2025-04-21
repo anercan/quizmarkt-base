@@ -10,6 +10,7 @@ import com.quizmarkt.base.data.request.UserFilterRequest;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.data.request.admin.FillQuizRequest;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UserResponse;
 import com.quizmarkt.base.service.AdminCRUDService;
@@ -83,5 +84,10 @@ public class AdminController {
     @PostMapping("/get-users-filter")
     public ResponseEntity<List<UserResponse>> getFilteredUsers(@RequestBody UserFilterRequest request) {
         return adminService.getFilteredUsers(request);
+    }
+
+    @PostMapping("/fill-with-questions")
+    public ResponseEntity<Boolean> fillQuizWithQuestion(@RequestBody FillQuizRequest request) {
+        return adminService.fillQuizWithQuestions(request);
     }
 }

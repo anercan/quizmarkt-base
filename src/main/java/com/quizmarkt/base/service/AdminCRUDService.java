@@ -7,7 +7,6 @@ import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.mapper.QuestionMapper;
 import com.quizmarkt.base.data.mapper.QuizGroupMapper;
 import com.quizmarkt.base.data.mapper.QuizMapper;
-import com.quizmarkt.base.data.repository.AnswerRepository;
 import com.quizmarkt.base.data.repository.QuestionRepository;
 import com.quizmarkt.base.data.repository.QuizGroupRepository;
 import com.quizmarkt.base.data.repository.QuizRepository;
@@ -15,10 +14,7 @@ import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.request.UserFilterRequest;
-import com.quizmarkt.base.data.request.admin.CreateOrUpdateAnswer;
-import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuestion;
-import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
-import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
+import com.quizmarkt.base.data.request.admin.*;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UserResponse;
 import com.quizmarkt.base.manager.CacheProviderManager;
@@ -29,12 +25,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author anercan
@@ -48,7 +43,6 @@ public class AdminCRUDService {
     protected static final Logger logger = LoggerFactory.getLogger(AdminCRUDService.class);
 
     private final QuizRepository quizRepository;
-    private final AnswerRepository answerRepository;
     private final QuizGroupRepository quizGroupRepository;
     private final QuizMapper quizMapper;
     private final QuestionRepository questionRepository;
@@ -59,8 +53,8 @@ public class AdminCRUDService {
     private final UserManagementManager userManagementManager;
 
     public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
-       ResponseEntity<JwtResponse> response =  userManagementService.adminLogin(request);
-       return ResponseEntity.ok(response.getBody());
+        ResponseEntity<JwtResponse> response = userManagementService.adminLogin(request);
+        return ResponseEntity.ok(response.getBody());
     }
 
     public ResponseEntity<Void> saveQuiz(CreateOrUpdateQuiz request) {
@@ -108,7 +102,7 @@ public class AdminCRUDService {
                 quizGroup.setId(request.getQuizGroupId());
                 return quizRepository.findAllByQuizGroupListContainingOrderByPriorityAsc(quizGroup, org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
             }
-            return quizRepository.findAllBy(org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
+            return quizRepository.findAllByAppId(1,org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize())); //todo bakılacak
         } catch (Exception e) {
             return Collections.emptyList();
         }
@@ -198,84 +192,30 @@ public class AdminCRUDService {
         return ResponseEntity.ok(userManagementManager.getFilteredUsers(request));
     }
 
-    /*public ResponseEntity<Void> generateMixed(GenerateMixedQuiz request) {
-        List<QuizGroup> quizGroupList = quizGroupRepository.findAllByAppId(request.getAppId(), org.springframework.data.domain.PageRequest.of(0, 10));
-        Optional<QuizGroup> mixedGroupOpt = quizGroupList.stream().filter(quizGroup -> quizGroup.getTitle().contains("Mixed")).findFirst();
-        if (mixedGroupOpt.isPresent()) {
-            Long mixedGroupId = mixedGroupOpt.get().getId();
-            List<Question> allQuestions = questionRepository.findAll();
+    public ResponseEntity<Boolean> fillQuizWithQuestions(FillQuizRequest request) {
+        List<Quiz> allQuizzes = quizRepository.findAllByAppId(request.getAppId(),org.springframework.data.domain.PageRequest.of(0, 100));
+        List<Question> questionList = allQuizzes
+                .stream()
+                .filter(Quiz::isActive)
+                .filter(quiz -> !StringUtils.hasText(request.getDifficulty()) || quiz.getAttributes().containsValue(request.getDifficulty()))
+                .flatMap(quiz -> quiz.getQuestionList().stream())
+                .collect(Collectors.toList());
 
-            // Mixed grubundaki quizleri al
-            List<Quiz> mixedQuizzes = quizRepository.findAllByQuizGroupListContaining(new QuizGroup(mixedGroupId));
+        List<Question> mixedQuestions = allQuizzes.stream().filter(quiz -> quiz.getName().toLowerCase(Locale.ROOT).contains("mixed")).flatMap(quiz -> quiz.getQuestionList().stream())
+                .toList();
 
-            // Mixed grubundaki soruların ID'lerini topla
-            Set<Long> mixedQuestionIds = mixedQuizzes.stream()
-                    .flatMap(quiz -> quiz.getQuestionList().stream())
-                    .map(Question::getId)
-                    .collect(Collectors.toSet());
+        questionList.removeAll(mixedQuestions);
 
-            // Mixed grubunda olmayan soruları filtrele
-            List<Question> availableQuestions = allQuestions.stream()
-                    .filter(question -> !mixedQuestionIds.contains(question.getId()))
-                    .collect(Collectors.toList());
+        List<Question> randomQuestions = questionList.stream().collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+            Collections.shuffle(list);
+            return list.stream().limit(request.getQuizSize()).toList();
+        }));
 
-            // İstenen sayıda rastgele soru seç
-            Collections.shuffle(availableQuestions);
-            List<Question> selectedQuestions = availableQuestions.stream()
-                    .limit(request.getQuestionSize())
-                    .collect(Collectors.toList());
-
-            AtomicInteger atomicInteger = new AtomicInteger(0);
-            List<Question> clonedQuestions = selectedQuestions.stream().map(originalQuestion -> {
-                Question newQuestion = new Question();
-                newQuestion.setCreatedBy("Generated");
-                newQuestion.setCreatedDate(ZonedDateTime.now());
-                newQuestion.setCorrectAnswerId(originalQuestion.getCorrectAnswerId());
-                newQuestion.setActive(true);
-                newQuestion.setExplanation(originalQuestion.getExplanation());
-                newQuestion.setPriority(atomicInteger.getAndIncrement());
-                newQuestion.setContent(originalQuestion.getContent());
-                newQuestion.setCorrectAnswerId(originalQuestion.getCorrectAnswerId());
-                newQuestion.setAttributes(new HashMap<>(originalQuestion.getAttributes()));
-                List<Answer> newAnswers = originalQuestion.getAnswersList().stream().map(originalAnswer -> {
-                    Answer newAnswer = new Answer();
-                    newAnswer.setCreatedBy("Generated");
-                    newAnswer.setCreatedDate(ZonedDateTime.now());
-                    newAnswer.setContent(originalAnswer.getContent());
-                    newAnswer.setImgUrl(originalAnswer.getImgUrl());
-                    return newAnswer;
-                }).collect(Collectors.toList());
-                answerRepository.saveAll(newAnswers);
-                newQuestion.setAnswersList(newAnswers);
-                return newQuestion;
-            }).collect(Collectors.toList());
-
-            for (Question selectedQuestion:selectedQuestions) {
-                String correctAnswerContent = selectedQuestion.getAnswersList().stream().filter(answer -> answer.getId().equals(selectedQuestion.getCorrectAnswerId())).findFirst().map(Answer::getContent).get();
-                Answer correctOne = selectedQuestion.getAnswersList().stream().filter(answer -> answer.getContent().equals(correctAnswerContent)).findFirst().get();
-                for (Question clone: clonedQuestions) {
-                    if (clone.getContent().equals(selectedQuestion.getContent())) {
-                        clone.setCorrectAnswerId(correctOne.getId());
-                    }
-                }
-            }
-
-            questionRepository.saveAll(clonedQuestions);
-
-            // Yeni bir quiz oluştur
-            Quiz newQuiz = new Quiz();
-            newQuiz.setCreatedBy("Generated");
-            newQuiz.setCreatedDate(ZonedDateTime.now());
-            newQuiz.setName("Generated Mixed Quiz");
-            newQuiz.setQuizGroupList(Collections.singletonList(mixedGroupOpt.get()));
-            newQuiz.setQuestionList(clonedQuestions);
-            newQuiz.setAvailablePremiumTypes(Collections.singletonList(PremiumType.NONE));
-            newQuiz.setActiveQuestionCount(request.getQuestionSize());
-            newQuiz.setAppId(request.getAppId());
-            newQuiz.setPriority(0);
-            quizRepository.save(newQuiz);
-        }
-        return ResponseEntity.ok().build();
-    }*/
-
+        Optional<Quiz> quizToBeFilled = quizRepository.findById(request.getQuizId());
+        Quiz quiz = quizToBeFilled.orElseThrow(RuntimeException::new);
+        quiz.setQuestionList(randomQuestions);
+        quiz.setActiveQuestionCount(randomQuestions.size());
+        quizRepository.save(quiz);
+        return ResponseEntity.ok(true);
+    }
 }

@@ -29,7 +29,7 @@ public class UserQuiz {
     private int appId;
     private Long quizGroupId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 

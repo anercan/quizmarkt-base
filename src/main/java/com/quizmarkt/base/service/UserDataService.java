@@ -91,7 +91,7 @@ public class UserDataService extends BaseService {
                     )).entrySet()
                     .stream()
                     .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                    .limit(8)
+                    .limit(7)
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,

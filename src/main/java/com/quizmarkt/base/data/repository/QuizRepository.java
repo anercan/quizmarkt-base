@@ -23,7 +23,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Cacheable(value = CacheConstants.QUIZ_LIST, key = "#quizGroup.id")
     List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroup, boolean active, Pageable pageable);
 
-    List<Quiz> findAllBy(Pageable pageable);
+    List<Quiz> findAllByAppId(int appId,Pageable pageable);
 
     List<Quiz> findAllByQuizGroupListContainingOrderByPriorityAsc(QuizGroup quizGroup, Pageable pageable);
 
