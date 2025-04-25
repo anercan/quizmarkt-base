@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class QuestionManager extends BaseManager {
         }
     }
 
-    public List<Question> getQuestionsWithIdList(List<Long> questionIds) { //todo belki attribute için kullanıldığı yerde sadece attribute çekilerek yönetilebilir
+    public List<Question> getQuestionsWithIdList(Collection<Long> questionIds) { //todo belki attribute için kullanıldığı yerde sadece attribute çekilerek yönetilebilir
         return questionRepository.findAllById(questionIds);
     }
 }
