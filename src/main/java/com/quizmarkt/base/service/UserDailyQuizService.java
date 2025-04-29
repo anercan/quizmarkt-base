@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserDailyQuizService extends BaseService {
 
-    public static final int DAILY_QUIZ_SIZE = 15;
+    public static final int DAILY_QUIZ_SIZE = 10;
     private final QuestionManager questionManager;
     private final UserDailyQuizManager userDailyQuizManager;
     private final UserDailyQuizMapper userDailyQuizMapper;
