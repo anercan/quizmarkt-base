@@ -24,7 +24,7 @@ public interface QuestionMapper {
         try {
             Question question = optionalQuestion.orElseGet(Question::new);
             question.setActive(request.isActive());
-            question.setContent(request.getContent());
+            question.setContent(request.getContent().trim());
             question.setImgUrl(request.getImgUrl());
             question.setPriority(request.getPriority());
             question.setExplanation(request.getExplanation());
@@ -42,7 +42,7 @@ public interface QuestionMapper {
                     if (answerReq.getId() != null) {
                         answer.setId(answerReq.getId());
                     }
-                    answer.setContent(answerReq.getContent());
+                    answer.setContent(answerReq.getContent().trim());
                     answer.setImgUrl(answerReq.getImgUrl());
                     answerList.add(answer);
                 }

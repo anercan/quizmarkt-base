@@ -81,7 +81,7 @@ public class AdminCRUDService {
         if (question.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        CreateOrUpdateAnswer correctAnswer = request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst().orElseThrow(RuntimeException::new);
+        CreateOrUpdateAnswer correctAnswer = request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst().orElse(null); //todo clienttan update durumunda correct answer gelmiyo kontrol et
         Question savedQuestion = saveQuestionWithAnswers(question.get(), request.getQuizId(), correctAnswer);
         List<UserQuiz> userQuizList = userQuizRepository.findByQuiz_Id(request.getQuizId());
         if (!CollectionUtils.isEmpty(userQuizList) && isNewQuestion) {
@@ -170,14 +170,17 @@ public class AdminCRUDService {
     }
 
     private Question saveQuestionWithAnswer(CreateOrUpdateAnswer correctAnswer, Question savedQuestion) {
-        Long correctId = savedQuestion.getAnswersList()
-                .stream()
-                .filter(answer -> answer.getContent().equalsIgnoreCase(correctAnswer.getContent()))
-                .map(Answer::getId)
-                .findFirst()
-                .orElse(null);
-        savedQuestion.setCorrectAnswerId(correctId);
-        return questionRepository.save(savedQuestion);
+        if (correctAnswer != null) {
+            Long correctId = savedQuestion.getAnswersList()
+                    .stream()
+                    .filter(answer -> answer.getContent().equalsIgnoreCase(correctAnswer.getContent()))
+                    .map(Answer::getId)
+                    .findFirst()
+                    .orElse(null);
+            savedQuestion.setCorrectAnswerId(correctId);
+            return questionRepository.save(savedQuestion);
+        }
+        return savedQuestion;
     }
 
     private void addToQuiz(Long quizId, Question savedQuestion) {
