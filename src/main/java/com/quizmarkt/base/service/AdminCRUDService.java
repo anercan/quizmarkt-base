@@ -87,7 +87,7 @@ public class AdminCRUDService {
         if (!CollectionUtils.isEmpty(userQuizList) && isNewQuestion) {
             List<UserQuiz> filteredList = userQuizList.stream().filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState())).toList();
             filteredList.forEach(userQuiz -> userQuiz.getCorrectQuestionList().add(savedQuestion.getId()));
-            //todo varolan questionda dogru cevap degisirse de handle et
+            userQuizRepository.saveAll(filteredList);
         }
 
         return ResponseEntity.ok().build();
