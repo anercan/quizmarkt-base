@@ -1,15 +1,14 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.Answer;
-import com.quizmarkt.base.data.entity.Question;
-import com.quizmarkt.base.data.entity.Quiz;
-import com.quizmarkt.base.data.entity.QuizGroup;
+import com.quizmarkt.base.data.entity.*;
+import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.mapper.QuestionMapper;
 import com.quizmarkt.base.data.mapper.QuizGroupMapper;
 import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.repository.QuestionRepository;
 import com.quizmarkt.base.data.repository.QuizGroupRepository;
 import com.quizmarkt.base.data.repository.QuizRepository;
+import com.quizmarkt.base.data.repository.UserQuizRepository;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizListWithGroupIdRequest;
 import com.quizmarkt.base.data.request.SignInRequest;
@@ -51,6 +50,7 @@ public class AdminCRUDService {
     private final CacheProviderManager cacheProviderManager;
     private final UserManagementService userManagementService;
     private final UserManagementManager userManagementManager;
+    private final UserQuizRepository userQuizRepository;
 
     public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
         ResponseEntity<JwtResponse> response = userManagementService.adminLogin(request);
@@ -76,8 +76,20 @@ public class AdminCRUDService {
     public ResponseEntity<Void> saveQuestion(CreateOrUpdateQuestion request) {
         cacheProviderManager.evictQuestionRelatedCaches();
         Optional<Question> optionalQuestion = request.getId() != null ? questionRepository.findById(request.getId()) : Optional.empty();
+        boolean isNewQuestion = optionalQuestion.isEmpty();
         Optional<Question> question = questionMapper.toQuestionEntity(request, optionalQuestion);
-        question.ifPresent(q -> this.saveQuestionWithAnswers(q, request.getQuizId(), request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst()));
+        if (question.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        CreateOrUpdateAnswer correctAnswer = request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst().orElseThrow(RuntimeException::new);
+        Question savedQuestion = saveQuestionWithAnswers(question.get(), request.getQuizId(), correctAnswer);
+        List<UserQuiz> userQuizList = userQuizRepository.findByQuiz_Id(request.getQuizId());
+        if (!CollectionUtils.isEmpty(userQuizList) && isNewQuestion) {
+            List<UserQuiz> filteredList = userQuizList.stream().filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState())).toList();
+            filteredList.forEach(userQuiz -> userQuiz.getCorrectQuestionList().add(savedQuestion.getId()));
+            //todo varolan questionda dogru cevap degisirse de handle et
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -150,23 +162,22 @@ public class AdminCRUDService {
     }
 
 
-    public void saveQuestionWithAnswers(Question question, Long quizId, Optional<CreateOrUpdateAnswer> correctAnswer) {
+    public Question saveQuestionWithAnswers(Question question, Long quizId, CreateOrUpdateAnswer correctAnswer) {
         Question savedQuestion = questionRepository.save(question);
-        if (correctAnswer.isPresent()) {
-            setCorrectAnswerId(correctAnswer, savedQuestion);
-        }
+        Question savedQuestionWithAnswer = saveQuestionWithAnswer(correctAnswer, savedQuestion);
         addToQuiz(quizId, savedQuestion);
+        return savedQuestionWithAnswer;
     }
 
-    private void setCorrectAnswerId(Optional<CreateOrUpdateAnswer> correctAnswer, Question savedQuestion) {
+    private Question saveQuestionWithAnswer(CreateOrUpdateAnswer correctAnswer, Question savedQuestion) {
         Long correctId = savedQuestion.getAnswersList()
                 .stream()
-                .filter(answer -> answer.getContent().equalsIgnoreCase(correctAnswer.get().getContent()))
+                .filter(answer -> answer.getContent().equalsIgnoreCase(correctAnswer.getContent()))
                 .map(Answer::getId)
                 .findFirst()
                 .orElse(null);
         savedQuestion.setCorrectAnswerId(correctId);
-        questionRepository.save(savedQuestion);
+        return questionRepository.save(savedQuestion);
     }
 
     private void addToQuiz(Long quizId, Question savedQuestion) {
