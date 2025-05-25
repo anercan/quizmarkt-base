@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -59,7 +60,10 @@ public class UserDataService extends BaseService {
                 .build();
     }
 
-    private List<ActivityData> getActivityData(List<UserQuiz> userQuizList) {
+    public List<ActivityData> getActivityData(List<UserQuiz> userQuizList) {
+        if (CollectionUtils.isEmpty(userQuizList)) {
+            return Collections.emptyList();
+        }
         try {
             Map<LocalDate, Long> groupedByDate = userQuizList.stream().filter(userQuiz -> Objects.nonNull(userQuiz.getStartDate()))
                     .collect(Collectors.groupingBy(
@@ -76,7 +80,10 @@ public class UserDataService extends BaseService {
         }
     }
 
-    private Map<String, Integer> getWrongsInfo(List<UserQuiz> userQuizList) {
+    public Map<String, Integer> getWrongsInfo(List<UserQuiz> userQuizList) {
+        if (CollectionUtils.isEmpty(userQuizList)) {
+            return Collections.emptyMap();
+        }
         try {
             return userQuizList.stream()
                     .flatMap(userQuiz ->

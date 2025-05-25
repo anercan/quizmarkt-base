@@ -1,7 +1,9 @@
 package com.quizmarkt.base.controller;
 
 import com.quizmarkt.base.data.response.ApiResponse;
+import com.quizmarkt.base.data.response.UserActivityData;
 import com.quizmarkt.base.data.response.UserDataResponse;
+import com.quizmarkt.base.data.response.UserQuizAnalyseResponse;
 import com.quizmarkt.base.service.ProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +25,15 @@ public class UserProfileController extends BaseController {
     @GetMapping("/get-user-info")
     public ResponseEntity<ApiResponse<UserDataResponse>> getUserData() {
         return respond(profileService.getUserData());
+    }
+
+    @GetMapping("/get-user-quiz-analyses")
+    public ResponseEntity<ApiResponse<UserQuizAnalyseResponse>> getUserQuizAnalyses() {
+        return respond(profileService.getUserQuizAnalyses());
+    }
+
+    @GetMapping("/get-user-activity-data")
+    public ResponseEntity<ApiResponse<UserActivityData>> getUserActivityData() {
+        return respond(profileService.getUserActivityData());
     }
 }
