@@ -30,9 +30,9 @@ public class UserDataService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final QuizManager quizManager;
 
-    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
+    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")  //todo sadece userid yeterli olacak
     public UserDataResponse getPremiumUserData(Optional<UserInfo> userInfo, String userId, Integer appId, boolean regularPremium) {
-        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(userId);
         long completedQuizCount = userQuizList.stream()
                 .filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState()))
                 .count();
@@ -50,7 +50,7 @@ public class UserDataService extends BaseService {
                 .build();
     }
 
-    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")
+    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium") //todo sadece userid yeterli olacak
     public UserDataResponse getNonPremiumUserData(Optional<UserInfo> userInfo, String userId, Integer appId, boolean regularPremium) {
         return UserDataResponse.builder()
                 .totalQuizCount(quizManager.getActiveQuizCount())

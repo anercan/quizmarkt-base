@@ -31,7 +31,12 @@ public class CacheProviderManager extends BaseManager {
         // This method is used to evict the USER_DATA cache
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ_GROUPS, CacheConstants.USER_DATA}, allEntries = true)
+    @CacheEvict(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId")
+    public void evictUserQuizForAnalyticsCache(String userId) {
+        // This method is used to evict the USER_QUIZ_FOR_ANALYTICS cache
+    }
+
+    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ_GROUPS, CacheConstants.QUIZ, CacheConstants.USER_DATA}, allEntries = true)
     public void evictQuizRelatedCaches() {
     }
 
@@ -39,7 +44,7 @@ public class CacheProviderManager extends BaseManager {
     public void evictQuizGroupRelatedCaches() {
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST}, allEntries = true)
+    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ}, allEntries = true)
     public void evictQuestionRelatedCaches() {
     }
 

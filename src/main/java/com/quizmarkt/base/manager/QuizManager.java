@@ -1,10 +1,12 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,7 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    //todo @Cacheable(value = CacheConstants.POPULAR_QUIZ_LIST, key = "#quizId") LRU ?
+    @Cacheable(value = CacheConstants.QUIZ, key = "#quizId")
     public Optional<Quiz> getQuizWithIdQuestionsSorted(Long quizId) {
         try {
             return quizRepository.findQuizWithQuestionsSorted(quizId);

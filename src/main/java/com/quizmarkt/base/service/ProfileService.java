@@ -41,7 +41,7 @@ public class ProfileService extends BaseService {
 
     public ApiResponse<UserQuizAnalyseResponse> getUserQuizAnalyses() {
         if (isRegularPremium()) {
-            List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+            List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(getUserId());
             return new ApiResponse<>(UserQuizAnalyseResponse.builder().wrongsMap(userDataService.getWrongsInfo(userQuizList)).build());
         } else {
             return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getUserQuizAnalyses"));
@@ -50,7 +50,7 @@ public class ProfileService extends BaseService {
 
     public ApiResponse<UserActivityData> getUserActivityData() {
         if (isRegularPremium()) {
-            List<UserQuiz> userQuizList = userQuizManager.getUserQuizList();
+            List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(getUserId());
             return new ApiResponse<>(UserActivityData.builder().activityDataList(userDataService.getActivityData(userQuizList)).build());
         } else {
             return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getUserActivityData"));

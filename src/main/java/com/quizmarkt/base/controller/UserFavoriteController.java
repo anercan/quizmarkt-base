@@ -2,13 +2,12 @@ package com.quizmarkt.base.controller;
 
 import com.quizmarkt.base.data.request.AddOrRemoveFavoriteRequest;
 import com.quizmarkt.base.data.response.ApiResponse;
-import com.quizmarkt.base.data.response.QuestionResponse;
+import com.quizmarkt.base.data.response.FavoriteQuestionIdsResponse;
+import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.service.UserFavoriteService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * @author anercan
@@ -20,13 +19,18 @@ public class UserFavoriteController extends BaseController {
 
     private final UserFavoriteService userFavoriteService;
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<QuestionResponse>>> getUserFavorites() {
-        return respond(userFavoriteService.getUserFavorites());
+    @GetMapping("/get-user-question-ids")
+    public ResponseEntity<ApiResponse<FavoriteQuestionIdsResponse>> getUserFavoritesQuestionIds() {
+        return respond(userFavoriteService.getUserFavoritesQuestionIds());
     }
 
-    @PostMapping("add-or-remove")
-    public ResponseEntity<ApiResponse<Boolean>> addOrRemove(@RequestBody AddOrRemoveFavoriteRequest request) {
+    @GetMapping("/get-user-questions")
+    public ResponseEntity<ApiResponse<QuizResponse>> getUserFavorites() {
+        return respond(userFavoriteService.getUserFavoriteQuestions());
+    }
+
+    @PostMapping("/add-or-remove")
+    public ResponseEntity<ApiResponse<FavoriteQuestionIdsResponse>> addOrRemove(@RequestBody AddOrRemoveFavoriteRequest request) {
         return respond(userFavoriteService.addOrRemoveFavorite(request));
     }
 

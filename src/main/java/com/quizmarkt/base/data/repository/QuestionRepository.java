@@ -2,6 +2,7 @@ package com.quizmarkt.base.data.repository;
 
 import com.quizmarkt.base.data.entity.Question;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                 ORDER BY RANDOM();
             """, nativeQuery = true)
     List<Question> findRandomQuestionsWithAppId(@Param("appId") int appId, Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"attributes","answersList"})
+    List<Question> findAllById(Iterable<Long> idList);
 }

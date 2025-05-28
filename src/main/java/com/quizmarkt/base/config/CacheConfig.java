@@ -32,17 +32,24 @@ public class CacheConfig {
         );
 
         cacheManager.registerCustomCache(
-                CacheConstants.USER_INFO,
+                CacheConstants.QUIZ_LIST,
                 Caffeine.newBuilder()
-                        .maximumSize(20)
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .maximumSize(10)
                         .build()
         );
 
         cacheManager.registerCustomCache(
-                CacheConstants.QUIZ_LIST,
+                CacheConstants.QUIZ,
                 Caffeine.newBuilder()
                         .maximumSize(10)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                CacheConstants.USER_INFO,
+                Caffeine.newBuilder()
+                        .maximumSize(20)
+                        .expireAfterWrite(30, TimeUnit.MINUTES)
                         .build()
         );
 
@@ -56,7 +63,14 @@ public class CacheConfig {
         cacheManager.registerCustomCache(
                 CacheConstants.USER_QUIZ_LIST,
                 Caffeine.newBuilder()
-                        .maximumSize(15)
+                        .maximumSize(10)
+                        .build()
+        );
+
+        cacheManager.registerCustomCache(
+                CacheConstants.USER_QUIZ_FOR_ANALYTICS,
+                Caffeine.newBuilder()
+                        .maximumSize(5)
                         .build()
         );
 

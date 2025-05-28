@@ -1,5 +1,6 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
@@ -10,6 +11,7 @@ import com.quizmarkt.base.data.repository.UserQuizRepository;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
 import com.quizmarkt.base.util.UserQuizUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -96,8 +98,8 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    //todo cache
-    public List<UserQuiz> getUserQuizList() {
+    @Cacheable(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId")
+    public List<UserQuiz> getUserQuizList(String userId) {
         try {
             return userQuizRepository.findAllByAppIdAndUserId(getAppId(), getUserId());
         } catch (Exception e) {
@@ -116,8 +118,6 @@ public class UserQuizManager extends BaseManager {
     }
 
     public UserQuiz createNewUserQuiz(CreateUpdateUserQuizRequest request) {
-        cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
-        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
         try {
             UserQuiz userQuiz = new UserQuiz();
             Quiz quiz = new Quiz();
@@ -129,6 +129,7 @@ public class UserQuizManager extends BaseManager {
             userQuiz.setAppId(getAppId());
             userQuiz.setState(UserQuizState.ON_GOING);
             UserQuiz createdUserQuiz = userQuizRepository.save(userQuiz);
+            clearUserRelatedCache();
             logger.info("userQuiz created userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId());
             return createdUserQuiz;
         } catch (Exception e) {
@@ -137,9 +138,13 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
-        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
+    private void clearUserRelatedCache() {
         cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
+        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
+        cacheProviderManager.evictUserQuizForAnalyticsCache(getUserId());
+    }
+
+    public UserQuiz updateUserQuiz(CreateUpdateUserQuizRequest request, UserQuiz userQuiz) {
         try {
             if (isUpdatedBefore(request, userQuiz)) {
                 logger.warn("This question answered before.request:{}", request);
@@ -157,6 +162,7 @@ public class UserQuizManager extends BaseManager {
                 userQuiz.setCompleteDate(ZonedDateTime.now());
             }
             UserQuiz updatedQuiz = userQuizRepository.save(userQuiz);
+            clearUserRelatedCache();
             logger.debug("userQuiz updated userId:{} appId:{} quizId:{}", getUserId(), getAppId(), request.getQuizId());
             return updatedQuiz;
         } catch (Exception e) {

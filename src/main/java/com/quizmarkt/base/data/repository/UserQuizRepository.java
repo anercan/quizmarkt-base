@@ -31,7 +31,11 @@ public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
     @EntityGraph(attributePaths = "wrongQuestionList")
     List<UserQuiz> findByQuiz_Id(Long quizId);
 
-    @EntityGraph(attributePaths = "wrongQuestionList")
+    @EntityGraph(attributePaths = {
+            "wrongQuestionList",
+            "wrongQuestionList.question",
+            "wrongQuestionList.question.attributes"
+    })
     List<UserQuiz> findAllByAppIdAndUserId(int appId, String userId);
 
     @Cacheable(value = CacheConstants.USER_QUIZ_LIST, key = "#appId + #userId")
