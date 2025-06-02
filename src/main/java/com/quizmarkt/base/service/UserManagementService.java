@@ -58,8 +58,6 @@ public class UserManagementService extends BaseService {
         try {
             UpdatePremiumInfoResponse updatePremiumInfoResponse = userManagementManager.googlePlaySubscribe(premiumInfoRequest);
             if (updatePremiumInfoResponse != null && updatePremiumInfoResponse.isSucceed()) {
-                cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), false);
-                cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), true);
                 return new ApiResponse<>(JwtResponse.builder().jwt(updatePremiumInfoResponse.getJwt()).build());
             }
             logger.warn("googlePlaySubscribe returned fail from userManagementManager message:{} userId:{}", updatePremiumInfoResponse.getMessage() != null ? updatePremiumInfoResponse.getMessage() : "", getUserId());

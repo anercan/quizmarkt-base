@@ -30,28 +30,8 @@ public class UserDataService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final QuizManager quizManager;
 
-    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium")  //todo sadece userid yeterli olacak
-    public UserDataResponse getPremiumUserData(Optional<UserInfo> userInfo, String userId, Integer appId, boolean regularPremium) {
-        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(userId);
-        long completedQuizCount = userQuizList.stream()
-                .filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState()))
-                .count();
-        long ongoingQuizCount = userQuizList.stream()
-                .filter(userQuiz -> UserQuizState.ON_GOING.equals(userQuiz.getState()))
-                .count();
-
-        return UserDataResponse.builder()
-                .totalQuizCount(quizManager.getActiveQuizCount())
-                .userSolvedQuizCount(completedQuizCount)
-                .userOngoingQuizCount(ongoingQuizCount)
-                .wrongsMap(getWrongsInfo(userQuizList))
-                .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
-                .activityDataList(getActivityData(userQuizList))
-                .build();
-    }
-
-    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId+#appId+#regularPremium") //todo sadece userid yeterli olacak
-    public UserDataResponse getNonPremiumUserData(Optional<UserInfo> userInfo, String userId, Integer appId, boolean regularPremium) {
+    @Cacheable(value = CacheConstants.USER_DATA, key = "#userId")
+    public UserDataResponse getPremiumUserData(Optional<UserInfo> userInfo, String userId) {
         return UserDataResponse.builder()
                 .totalQuizCount(quizManager.getActiveQuizCount())
                 .userSolvedQuizCount(userQuizManager.getUserQuizCount(UserQuizState.COMPLETED))
@@ -98,7 +78,7 @@ public class UserDataService extends BaseService {
                     )).entrySet()
                     .stream()
                     .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                    .limit(7)
+                    .limit(10)
                     .collect(Collectors.toMap(
                             Map.Entry::getKey,
                             Map.Entry::getValue,

@@ -140,7 +140,7 @@ public class UserQuizManager extends BaseManager {
 
     private void clearUserRelatedCache() {
         cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
-        cacheProviderManager.evictUserDataCache(getUserId(), getAppId(), isRegularPremium());
+        cacheProviderManager.evictUserDataCache(getUserId());
         cacheProviderManager.evictUserQuizForAnalyticsCache(getUserId());
     }
 

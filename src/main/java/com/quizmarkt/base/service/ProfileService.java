@@ -24,11 +24,7 @@ public class ProfileService extends BaseService {
 
     public ApiResponse<UserDataResponse> getUserData() {
         Optional<UserInfo> userInfo = getUserInfo();
-        if (isRegularPremium()) {
-            return new ApiResponse<>(userDataService.getPremiumUserData(userInfo, getUserId(), getAppId(), isRegularPremium()));
-        } else {
-            return new ApiResponse<>(userDataService.getNonPremiumUserData(userInfo, getUserId(), getAppId(), isRegularPremium()));
-        }
+        return new ApiResponse<>(userDataService.getPremiumUserData(userInfo, getUserId()));
     }
 
     private Optional<UserInfo> getUserInfo() {

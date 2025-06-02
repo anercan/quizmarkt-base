@@ -227,7 +227,7 @@ public class AdminCRUDService {
 
         Optional<Quiz> quizToBeFilled = quizRepository.findById(request.getQuizId());
         Quiz quiz = quizToBeFilled.orElseThrow(RuntimeException::new);
-        quiz.setQuestionList(randomQuestions);
+        quiz.setQuestionList(new ArrayList<>(randomQuestions));
         quiz.setActiveQuestionCount(randomQuestions.size());
         quizRepository.save(quiz);
         return ResponseEntity.ok(true);
