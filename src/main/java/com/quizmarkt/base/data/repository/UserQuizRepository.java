@@ -17,6 +17,7 @@ import java.util.Set;
  */
 
 @Repository
+//indexed userId-quizId and quizId
 public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
 
     @EntityGraph(attributePaths = "wrongQuestionList")

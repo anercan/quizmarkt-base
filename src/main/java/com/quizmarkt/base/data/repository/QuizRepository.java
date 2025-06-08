@@ -22,7 +22,7 @@ import java.util.Optional;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
     @Cacheable(value = CacheConstants.QUIZ_LIST, key = "#quizGroup.id")
-    @EntityGraph(attributePaths = {"attributes"})
+    @EntityGraph(attributePaths = {"attributes"}) // todo 2025-06-05T03:20:25.618Z WARN  HHH90003004: firstResult/maxResults specified with collection fetch; applying in memory check if its giving that warning
     List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroup, boolean active, Pageable pageable);
 
     List<Quiz> findAllByAppId(int appId,Pageable pageable);

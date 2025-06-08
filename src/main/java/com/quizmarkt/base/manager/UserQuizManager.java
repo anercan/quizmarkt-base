@@ -80,6 +80,13 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
+    /**
+     * Returns a list of UserQuiz filtered by quizId.
+     * Uses DB index on quiz_id for faster queries.
+     *
+     * @param quizId the quiz ID to filter by
+     * @return list of UserQuiz for the given quizId
+     */
     public List<UserQuiz> getUserQuizWithQuizId(Long quizId) {
         try {
             return userQuizRepository.findByQuiz_Id(quizId);

@@ -32,6 +32,7 @@ public class QuizService extends BaseService {
     private final QuizMapper quizMapper;
     private final UserQuizMapper userQuizMapper;
 
+    //@Transactional(readOnly = true) todo
     public ApiResponse<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
         List<Quiz> quizList = quizManager.getActiveQuizListWithGroupId(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());

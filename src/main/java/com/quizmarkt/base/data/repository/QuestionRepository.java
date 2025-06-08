@@ -25,7 +25,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                 WHERE z.app_id = :appId
                 ORDER BY RANDOM();
             """, nativeQuery = true)
-    List<Question> findRandomQuestionsWithAppId(@Param("appId") int appId, Pageable pageable);
+    List<Question> findRandomQuestionsWithAppId(@Param("appId") int appId, Pageable pageable); // todo pageable yerine limit
 
     @Override
     @EntityGraph(attributePaths = {"attributes","answersList"})

@@ -24,6 +24,7 @@ public class UserQuizService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final UserQuizMapper userQuizMapper;
 
+    //@Transactional(readOnly = true) todo
     public ApiResponse<UserQuizListResponse> getUserQuizList() {
         List<SolvedQuizListResponse> userQuizInListResponses = new ArrayList<>();
         List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();

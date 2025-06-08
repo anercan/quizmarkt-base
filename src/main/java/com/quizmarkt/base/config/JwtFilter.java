@@ -35,7 +35,6 @@ public class JwtFilter implements Filter {
                 if (claims == null) {
                     log.warn("UNAUTHORIZED operation couldn't get claims jwt:{}", jwt);
                     httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    UserContextHolder.clear();
                     return;
                 }
                 UserContextHolder.createUserContextThreadLocal(claims);
@@ -43,12 +42,10 @@ public class JwtFilter implements Filter {
             } else {
                 log.warn("UNAUTHORIZED operation jwt:{}", jwt);
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                UserContextHolder.clear();
             }
         } catch (Exception ex) {
-            log.warn("BAD_REQUEST operation RequestURI:{}", httpRequest.getRequestURI());
+            log.error("BAD_REQUEST operation RequestURI:{}", httpRequest.getRequestURI(), ex);
             httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            UserContextHolder.clear();
         } finally {
             UserContextHolder.clear();
         }
