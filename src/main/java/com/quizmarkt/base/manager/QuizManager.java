@@ -10,7 +10,6 @@ import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.data.response.QuizResponseWithUserData;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -28,11 +27,11 @@ public class QuizManager extends BaseManager {
     private final QuizRepository quizRepository;
     private final QuizMapper quizMapper;
 
-    public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) {
+    public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) { //todo pageable
         try {
             QuizGroup quizGroup = new QuizGroup();
             quizGroup.setId(request.getQuizGroupId());
-            return quizRepository.findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(quizGroup, true, PageRequest.of(request.getPage(), request.getPageSize()));
+            return quizRepository.findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(quizGroup, true);
         } catch (Exception e) {
             logger.error("getQuizListWithGroupId got exception.userId:{},groupId:{}", getUserId(), e);
             return Collections.emptyList();

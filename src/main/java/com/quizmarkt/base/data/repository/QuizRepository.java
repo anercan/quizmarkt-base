@@ -21,8 +21,8 @@ import java.util.Optional;
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-    @EntityGraph(attributePaths = {"attributes"}) // todo 2025-06-05T03:20:25.618Z WARN  HHH90003004: firstResult/maxResults specified with collection fetch; applying in memory check if its giving that warning
-    List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroup, boolean active, Pageable pageable);
+    @EntityGraph(attributePaths = {"attributes"})
+    List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroup, boolean active);
 
     List<Quiz> findAllByAppId(int appId,Pageable pageable);
 

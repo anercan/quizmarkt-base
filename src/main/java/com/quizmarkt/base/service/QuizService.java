@@ -32,7 +32,7 @@ public class QuizService extends BaseService {
     private final QuizMapper quizMapper;
     private final UserQuizMapper userQuizMapper;
 
-    //@Transactional(readOnly = true) todo 2025-06-05T03:20:25.618Z WARN  HHH90003004: firstResult/maxResults specified with collection fetch; applying in memory check if its giving that warning
+    //@Transactional(readOnly = true)
     public ApiResponse<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
         List<QuizResponseWithUserData> quizResponseWithUserDataList = quizManager.getQuizResponseWithUserDataList(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
@@ -40,13 +40,13 @@ public class QuizService extends BaseService {
         return new ApiResponse<>(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 
-    public ApiResponse<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) {
+    public ApiResponse<QuizResponse> getQuizWithUserQuizData(Long quizId) {
         QuizResponse quizResponse = quizManager.getQuizResponseWithId(quizId);
         if (Objects.isNull(quizResponse)) {
             return new ApiResponse<>(ApiResponse.Status.fail());
         }
         if (!quizResponse.getAvailablePremiumTypes().contains(getPremiumType())) {
-            logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
+            logger.warn("getQuizWithUserQuizData without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
             return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getQuizListWithUserData"));
         }
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);

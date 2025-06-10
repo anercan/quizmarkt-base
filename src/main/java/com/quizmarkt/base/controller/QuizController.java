@@ -30,8 +30,8 @@ public class QuizController extends BaseController {
     }
 
     @GetMapping("/get-quiz-with-id/{quizId}")
-    public ResponseEntity<ApiResponse<QuizResponse>> getQuizWithUserQuizDataForStartTest(@PathVariable String quizId) {
-        return respond(quizService.getQuizWithUserQuizDataForStartTest(Long.parseLong(quizId)));
+    public ResponseEntity<ApiResponse<QuizResponse>> getQuizWithUserQuizData(@PathVariable String quizId) {
+        return respond(quizService.getQuizWithUserQuizData(Long.parseLong(quizId)));
     }
 
     @PostMapping("/get-user-daily-quiz")

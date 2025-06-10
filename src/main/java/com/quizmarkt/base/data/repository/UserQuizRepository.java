@@ -24,7 +24,11 @@ public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
     @EntityGraph(attributePaths = "wrongQuestionList")
     List<UserQuiz> findAllByAppIdAndUserIdAndQuizGroupIdIn(int appId, String userId, Set<Long> quizGroupId);
 
-    @EntityGraph(attributePaths = "wrongQuestionList")
+    @EntityGraph(attributePaths = {
+            "wrongQuestionList",
+            "wrongQuestionList.question",
+            "wrongQuestionList.wrongAnswer"
+    })
     Optional<UserQuiz> findByQuiz_IdAndUserId(Long quizId, String userId);
 
     @EntityGraph(attributePaths = "wrongQuestionList")
