@@ -1,6 +1,5 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -34,24 +34,24 @@ public class QuizService extends BaseService {
 
     //@Transactional(readOnly = true) todo
     public ApiResponse<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
-        List<Quiz> quizList = quizManager.getActiveQuizListWithGroupId(request);
+        List<QuizResponseWithUserData> quizResponseWithUserDataList = quizManager.getQuizResponseWithUserDataList(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
-        List<QuizResponseWithUserData> quizWithUserDataList = quizList.stream().map(quiz -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, quiz, getPremiumType())).collect(Collectors.toList());
+        List<QuizResponseWithUserData> quizWithUserDataList = quizResponseWithUserDataList.stream().map(quizWithUserData -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, getPremiumType(), quizWithUserData)).collect(Collectors.toList());
         return new ApiResponse<>(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 
     public ApiResponse<QuizResponse> getQuizWithUserQuizDataForStartTest(Long quizId) {
-        Optional<Quiz> quizWithId = quizManager.getQuizWithIdQuestionsSorted(quizId);
-        if (quizWithId.isEmpty()) {
+        QuizResponse quizResponse = quizManager.getQuizResponseWithId(quizId);
+        if (Objects.isNull(quizResponse)) {
             return new ApiResponse<>(ApiResponse.Status.fail());
         }
-        if (!quizWithId.get().getAvailablePremiumTypes().contains(getPremiumType())) {
+        if (!quizResponse.getAvailablePremiumTypes().contains(getPremiumType())) {
             logger.warn("getQuizWithUserQuizDataForStartTest without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
             return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getQuizListWithUserData"));
         }
-        QuizResponse quizResponse = quizMapper.toQuizResponse(quizWithId.get());
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
         userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
         return new ApiResponse<>(quizResponse);
     }
+
 }

@@ -1,8 +1,10 @@
 package com.quizmarkt.base.data.response;
 
+import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.enums.UserQuizState;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,5 +21,6 @@ public class QuizResponseWithUserData {
     int questionCount;
     private UserQuizState state;
     private boolean isLocked;
+    private List<PremiumType> availablePremiumTypes;
 
 }

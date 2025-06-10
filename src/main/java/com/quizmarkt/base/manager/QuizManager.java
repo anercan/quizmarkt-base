@@ -3,8 +3,11 @@ package com.quizmarkt.base.manager;
 import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
+import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
+import com.quizmarkt.base.data.response.QuizResponse;
+import com.quizmarkt.base.data.response.QuizResponseWithUserData;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class QuizManager extends BaseManager {
 
     private final QuizRepository quizRepository;
+    private final QuizMapper quizMapper;
 
     public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) {
         try {
@@ -35,7 +39,6 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    @Cacheable(value = CacheConstants.QUIZ, key = "#quizId")
     public Optional<Quiz> getQuizWithIdQuestionsSorted(Long quizId) {
         try {
             return quizRepository.findQuizWithQuestionsSorted(quizId);
@@ -47,10 +50,22 @@ public class QuizManager extends BaseManager {
 
     public int getActiveQuizCount() {
         try {
-            return quizRepository.countAllByActiveAndAppId(true,getAppId());
+            return quizRepository.countAllByActiveAndAppId(true, getAppId());
         } catch (Exception e) {
             logger.error("getActiveQuizCount got exception", e);
             return 0;
         }
+    }
+
+    @Cacheable(value = CacheConstants.QUIZ, key = "#quizId", unless = "#result == null")
+    public QuizResponse getQuizResponseWithId(Long quizId) {
+        Optional<Quiz> quizResponseOpt = getQuizWithIdQuestionsSorted(quizId);
+        return quizResponseOpt.map(quizMapper::toQuizResponse).orElse(null);
+    }
+
+    @Cacheable(value = CacheConstants.QUIZ_LIST, key = "#request.quizGroupId", unless = "#result == null || #result.isEmpty()")
+    public List<QuizResponseWithUserData> getQuizResponseWithUserDataList(QuizListWithUserDataRequest request) {
+        List<Quiz> quizList = getActiveQuizListWithGroupId(request);
+        return quizMapper.toQuizResponseWithUserData(quizList);
     }
 }

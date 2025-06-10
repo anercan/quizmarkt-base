@@ -3,16 +3,16 @@ package com.quizmarkt.base.config;
 import com.quizmarkt.base.data.context.UserContextHolder;
 import com.quizmarkt.base.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
+import java.util.Objects;
 
-import static com.quizmarkt.base.util.JwtUtil.getClaims;
 import static com.quizmarkt.base.util.JwtUtil.getJwtFromRequest;
 
 @Slf4j
@@ -30,21 +30,16 @@ public class JwtFilter implements Filter {
 
         try {
             String jwt = getJwtFromRequest(httpRequest);
-            if (StringUtils.isNotEmpty(jwt) && JwtUtil.checkJWT(jwt)) {
-                Claims claims = getClaims(jwt);
-                if (claims == null) {
-                    log.warn("UNAUTHORIZED operation couldn't get claims jwt:{}", jwt);
-                    httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
-                UserContextHolder.createUserContextThreadLocal(claims);
-                chain.doFilter(request, response);
-            } else {
-                log.warn("UNAUTHORIZED operation jwt:{}", jwt);
+            Claims claims = JwtUtil.checkAndGetJWTClaims(jwt); //todo renew expired token ?
+            if (Objects.isNull(claims)) {
+                log.warn("UNAUTHORIZED operation couldn't get claims jwt:{}", jwt);
                 httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
-        } catch (Exception ex) {
-            log.error("BAD_REQUEST operation RequestURI:{}", httpRequest.getRequestURI(), ex);
+            UserContextHolder.createUserContextThreadLocal(claims);
+            chain.doFilter(request, response);
+        } catch (JwtException e) {
+            log.error("BAD_REQUEST operation RequestURI:{}", httpRequest.getRequestURI(), e);
             httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } finally {
             UserContextHolder.clear();

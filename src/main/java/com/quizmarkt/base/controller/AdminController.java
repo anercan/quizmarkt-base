@@ -39,7 +39,7 @@ public class AdminController {
     public void before() {
         boolean notContainsLogin = !httpServletRequest.getRequestURI().contains("login");
         if (notContainsLogin) {
-            Claims claims = JwtUtil.getClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
+            Claims claims = JwtUtil.checkAndGetJWTClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
             if (!(claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
                 throw new RuntimeException("Invalid admin request");
             }

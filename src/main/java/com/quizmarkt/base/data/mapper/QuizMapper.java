@@ -27,12 +27,11 @@ import java.util.Optional;
 public interface QuizMapper {
 
     @Mapping(source = "activeQuestionCount", target = "questionCount")
-    QuizResponseWithUserData toQuizResponseWithUserData(Quiz quiz);
+    List<QuizResponseWithUserData> toQuizResponseWithUserData(List<Quiz> quiz);
 
-    default QuizResponseWithUserData getQuizResponseWithUserData(Map<Long, UserQuiz> quizIdUserQuizMap, Quiz quiz, PremiumType userPremiumType) {
-        QuizResponseWithUserData quizGroupWithUserData = this.toQuizResponseWithUserData(quiz);
-        quizGroupWithUserData.setLocked(!quiz.getAvailablePremiumTypes().contains(userPremiumType));
-        UserQuiz userQuiz = quizIdUserQuizMap.get(quiz.getId());
+    default QuizResponseWithUserData getQuizResponseWithUserData(Map<Long, UserQuiz> quizIdUserQuizMap, PremiumType userPremiumType,QuizResponseWithUserData quizGroupWithUserData) {
+        quizGroupWithUserData.setLocked(!quizGroupWithUserData.getAvailablePremiumTypes().contains(userPremiumType));
+        UserQuiz userQuiz = quizIdUserQuizMap.get(quizGroupWithUserData.getId());
         if (userQuiz != null) {
             quizGroupWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
             quizGroupWithUserData.setState(userQuiz.getState());
