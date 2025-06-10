@@ -24,6 +24,7 @@ public class UserQuizService extends BaseService {
     private final UserQuizManager userQuizManager;
     private final UserQuizMapper userQuizMapper;
 
+    //todo for order ongoing quizzes lastmodified date should be added to entity
     //@Transactional(readOnly = true) todo
     public ApiResponse<UserQuizListResponse> getUserQuizList() {
         List<SolvedQuizListResponse> userQuizInListResponses = new ArrayList<>();

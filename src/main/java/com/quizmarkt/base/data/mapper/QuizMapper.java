@@ -27,6 +27,9 @@ import java.util.Optional;
 public interface QuizMapper {
 
     @Mapping(source = "activeQuestionCount", target = "questionCount")
+    QuizResponseWithUserData mapSingleQuiz(Quiz quiz);
+
+    //using mapSingleQuiz
     List<QuizResponseWithUserData> toQuizResponseWithUserData(List<Quiz> quiz);
 
     default QuizResponseWithUserData getQuizResponseWithUserData(Map<Long, UserQuiz> quizIdUserQuizMap, PremiumType userPremiumType,QuizResponseWithUserData quizGroupWithUserData) {
