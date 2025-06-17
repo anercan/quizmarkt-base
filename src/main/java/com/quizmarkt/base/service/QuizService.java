@@ -36,7 +36,7 @@ public class QuizService extends BaseService {
     public ApiResponse<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
         List<QuizResponseWithUserData> quizResponseWithUserDataList = quizManager.getQuizResponseWithUserDataList(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
-        List<QuizResponseWithUserData> quizWithUserDataList = quizResponseWithUserDataList.stream().map(quizWithUserData -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap, getPremiumType(), quizWithUserData)).collect(Collectors.toList());
+        List<QuizResponseWithUserData> quizWithUserDataList = quizResponseWithUserDataList.stream().map(quizWithUserData -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap.get(quizWithUserData.getId()), getPremiumType(), quizWithUserData)).collect(Collectors.toList());
         return new ApiResponse<>(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 

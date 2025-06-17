@@ -32,16 +32,15 @@ public interface QuizMapper {
     //using mapSingleQuiz
     List<QuizResponseWithUserData> toQuizResponseWithUserData(List<Quiz> quiz);
 
-    default QuizResponseWithUserData getQuizResponseWithUserData(Map<Long, UserQuiz> quizIdUserQuizMap, PremiumType userPremiumType,QuizResponseWithUserData quizGroupWithUserData) {
-        quizGroupWithUserData.setLocked(!quizGroupWithUserData.getAvailablePremiumTypes().contains(userPremiumType));
-        UserQuiz userQuiz = quizIdUserQuizMap.get(quizGroupWithUserData.getId());
+    default QuizResponseWithUserData getQuizResponseWithUserData(UserQuiz userQuiz, PremiumType userPremiumType,QuizResponseWithUserData quizResponseWithUserData) {
+        quizResponseWithUserData.setLocked(!quizResponseWithUserData.getAvailablePremiumTypes().contains(userPremiumType));
         if (userQuiz != null) {
-            quizGroupWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
-            quizGroupWithUserData.setState(userQuiz.getState());
+            quizResponseWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
+            quizResponseWithUserData.setState(userQuiz.getState());
         } else {
-            quizGroupWithUserData.setSolvedCount(0);
+            quizResponseWithUserData.setSolvedCount(0);
         }
-        return quizGroupWithUserData;
+        return quizResponseWithUserData;
     }
 
     QuizResponse toQuizResponse(Quiz quiz);
