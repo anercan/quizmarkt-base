@@ -18,6 +18,7 @@ public class QuizResponseWithUserData {
     private int priority;
     private Map<String, String> attributes;
     int solvedCount;
+    int correctCount;
     int questionCount;
     private UserQuizState state;
     private boolean isLocked;

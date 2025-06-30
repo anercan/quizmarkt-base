@@ -36,6 +36,7 @@ public interface QuizMapper {
         quizResponseWithUserData.setLocked(!quizResponseWithUserData.getAvailablePremiumTypes().contains(userPremiumType));
         if (userQuiz != null) {
             quizResponseWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
+            quizResponseWithUserData.setCorrectCount(userQuiz.getCorrectQuestionList().size());
             quizResponseWithUserData.setState(userQuiz.getState());
         } else {
             quizResponseWithUserData.setSolvedCount(0);
