@@ -105,7 +105,7 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    @Cacheable(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId")
+    @Cacheable(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId") //todo bu cache de proxy objeye atılmalı
     public List<UserQuiz> getUserQuizList(String userId) {
         try {
             return userQuizRepository.findAllByAppIdAndUserId(getAppId(), getUserId());
