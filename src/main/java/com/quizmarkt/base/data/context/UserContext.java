@@ -16,4 +16,8 @@ public class UserContext {
     private String userId;
     private int appId;
     private PremiumType premiumType;
+
+    public UserContext(Integer appId) {
+        this.appId = appId;
+    }
 }

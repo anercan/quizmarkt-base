@@ -3,15 +3,22 @@ package com.quizmarkt.base.data.context;
 import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.util.JwtUtil;
 import io.jsonwebtoken.Claims;
+import org.apache.commons.lang3.StringUtils;
 
 public class UserContextHolder {
 
     private static final ThreadLocal<UserContext> userContextThreadLocal = new ThreadLocal<>();
 
     public static void createUserContextThreadLocal(Claims claims) {
-        UserContext userContext = new UserContext((String) claims.get(JwtUtil.USER_ID)
-                , (Integer) claims.get(JwtUtil.APP_ID)
-                , PremiumType.valueOf((String) claims.get(JwtUtil.PREMIUM_TYPE)));
+        UserContext userContext;
+        String userId = (String) claims.get(JwtUtil.USER_ID);
+        if (!StringUtils.isEmpty(userId)) {
+            userContext = new UserContext((String) claims.get(JwtUtil.USER_ID)
+                    , (Integer) claims.get(JwtUtil.APP_ID)
+                    , PremiumType.valueOf((String) claims.get(JwtUtil.PREMIUM_TYPE)));
+        } else {
+            userContext = new UserContext((Integer) claims.get(JwtUtil.APP_ID));
+        }
         userContextThreadLocal.set(userContext);
     }
 
