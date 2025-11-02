@@ -1,7 +1,9 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.*;
-import com.quizmarkt.base.data.enums.UserQuizState;
+import com.quizmarkt.base.data.entity.Answer;
+import com.quizmarkt.base.data.entity.Question;
+import com.quizmarkt.base.data.entity.Quiz;
+import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.mapper.QuestionMapper;
 import com.quizmarkt.base.data.mapper.QuizGroupMapper;
 import com.quizmarkt.base.data.mapper.QuizMapper;
@@ -37,7 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class AdminCRUDService {
+public class AdminCRUDService extends BaseAppSupport {
 
     protected static final Logger logger = LoggerFactory.getLogger(AdminCRUDService.class);
 
@@ -76,19 +78,12 @@ public class AdminCRUDService {
     public ResponseEntity<Void> saveQuestion(CreateOrUpdateQuestion request) {
         cacheProviderManager.evictQuestionRelatedCaches();
         Optional<Question> optionalQuestion = request.getId() != null ? questionRepository.findById(request.getId()) : Optional.empty();
-        boolean isNewQuestion = optionalQuestion.isEmpty();
         Optional<Question> question = questionMapper.toQuestionEntity(request, optionalQuestion);
         if (question.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         CreateOrUpdateAnswer correctAnswer = request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst().orElse(null); //todo clienttan update durumunda correct answer gelmiyo kontrol et
         Question savedQuestion = saveQuestionWithAnswers(question.get(), request.getQuizId(), correctAnswer);
-        List<UserQuiz> userQuizList = userQuizRepository.findByQuiz_Id(request.getQuizId());
-        if (!CollectionUtils.isEmpty(userQuizList) && isNewQuestion) {
-            List<UserQuiz> filteredList = userQuizList.stream().filter(userQuiz -> UserQuizState.COMPLETED.equals(userQuiz.getState())).toList();
-            filteredList.forEach(userQuiz -> userQuiz.getCorrectQuestionList().add(savedQuestion.getId()));
-            userQuizRepository.saveAll(filteredList);
-        }
 
         return ResponseEntity.ok().build();
     }
@@ -114,7 +109,7 @@ public class AdminCRUDService {
                 quizGroup.setId(request.getQuizGroupId());
                 return quizRepository.findAllByQuizGroupListContainingOrderByPriorityAsc(quizGroup, org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
             }
-            return quizRepository.findAllByAppId(1,org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize())); //todo bakılacak
+            return quizRepository.findAllByAppId(getAppId(),org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize())); //todo bakılacak
         } catch (Exception e) {
             return Collections.emptyList();
         }
@@ -141,7 +136,7 @@ public class AdminCRUDService {
 
     public List<QuizGroup> getQuizGroups(com.quizmarkt.base.data.request.PageRequest request) {
         try {
-            return quizGroupRepository.findAllByAppId(request.getAppId(), org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
+            return quizGroupRepository.findAllByAppId(getAppId(), org.springframework.data.domain.PageRequest.of(request.getPage(), request.getPageSize()));
         } catch (Exception e) {
             logger.error("getQuizGroups got exception request:{}", request.toString(), e);
             return Collections.emptyList();
@@ -207,7 +202,7 @@ public class AdminCRUDService {
     }
 
     public ResponseEntity<Boolean> fillQuizWithQuestions(FillQuizRequest request) {
-        List<Quiz> allQuizzes = quizRepository.findAllByAppId(request.getAppId(),org.springframework.data.domain.PageRequest.of(0, 100));
+        List<Quiz> allQuizzes = quizRepository.findAllByAppId(getAppId(),org.springframework.data.domain.PageRequest.of(0, 100));
         List<Question> questionList = allQuizzes
                 .stream()
                 .filter(Quiz::isActive)

@@ -14,10 +14,12 @@ import com.quizmarkt.base.data.request.admin.FillQuizRequest;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UserResponse;
 import com.quizmarkt.base.service.AdminCRUDService;
+import com.quizmarkt.base.util.ConfigUtils;
 import com.quizmarkt.base.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,11 +36,12 @@ public class AdminController {
 
     private final AdminCRUDService adminService;
     private final HttpServletRequest httpServletRequest;
+    private final Environment environment;
 
     @ModelAttribute
     public void before() {
         boolean notContainsLogin = !httpServletRequest.getRequestURI().contains("login");
-        if (notContainsLogin) {
+        if (notContainsLogin && !ConfigUtils.isLocalProfileActive(environment)) {
             Claims claims = JwtUtil.checkAndGetJWTClaims(JwtUtil.getJwtFromRequest(httpServletRequest));
             if (!(claims != null && claims.get("ROLE").toString().equals("ADMIN"))) {
                 throw new RuntimeException("Invalid admin request");
@@ -77,8 +80,14 @@ public class AdminController {
     }
 
     @PostMapping("/save-question")
-    public ResponseEntity<Void> getQuizGroupList(@RequestBody CreateOrUpdateQuestion request) {
+    public ResponseEntity<Void> saveQuestion(@RequestBody CreateOrUpdateQuestion request) {
         return adminService.saveQuestion(request);
+    }
+
+    @PostMapping("/save-question-all")
+    public ResponseEntity<Void> saveQuestionAll(@RequestBody List<CreateOrUpdateQuestion> request) {
+        request.forEach(adminService::saveQuestion);
+        return ResponseEntity.ok(null);
     }
 
     @PostMapping("/get-users-filter")

@@ -44,7 +44,7 @@ public class CacheProviderManager extends BaseManager {
     public void evictQuizGroupRelatedCaches() {
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_COUNT, CacheConstants.QUIZ_LIST, CacheConstants.QUIZ}, allEntries = true)
+    @CacheEvict(value = {CacheConstants.QUIZ_LIST, CacheConstants.QUIZ}, allEntries = true)
     public void evictQuestionRelatedCaches() {
     }
 

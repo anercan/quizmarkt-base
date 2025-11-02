@@ -8,17 +8,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @author anercan
  */
-public class BaseService {
+public abstract class BaseService extends BaseAppSupport {
 
     protected static final Logger logger = LoggerFactory.getLogger(BaseService.class);
-
-    protected Integer getAppId() {
-        return UserContextHolder.getAppId();
-    }
-
-    protected String getUserId() {
-        return UserContextHolder.getUserId();
-    }
 
     protected boolean isRegularPremium() {
         return !PremiumType.NONE.equals(UserContextHolder.getPremiumType());
