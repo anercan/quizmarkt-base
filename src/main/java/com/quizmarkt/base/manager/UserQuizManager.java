@@ -1,5 +1,6 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.cache.UserQuizCacheable;
 import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.Quiz;
@@ -43,7 +44,7 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    private List<UserQuiz> getAllByAppIdAndUserIdAndQuizGroupIdIn(Set<Long> quizGroupIdList) {
+    private List<UserQuiz> getAllByAppIdAndUserIdAndQuizGroupIdIn(Set<Long> quizGroupIdList) { //todo cacheable
         try {
             return userQuizRepository.findAllByAppIdAndUserIdAndQuizGroupIdIn(getAppId(), getUserId(), quizGroupIdList);
         } catch (Exception e) {
@@ -73,7 +74,7 @@ public class UserQuizManager extends BaseManager {
 
     public Optional<UserQuiz> getUserQuizWithQuizIdAndUserIdCompleted(Long quizId) {
         try {
-            return userQuizRepository.findByQuiz_IdAndUserIdAndState(quizId, getUserId(),UserQuizState.COMPLETED);
+            return userQuizRepository.findByQuiz_IdAndUserIdAndState(quizId, getUserId(), UserQuizState.COMPLETED);
         } catch (Exception e) {
             logger.error("getUserQuizWithQuizIdAndUserIdCompleted got exception.userId:{} quizId:{}", getUserId(), quizId, e);
             return Optional.empty();
@@ -96,19 +97,22 @@ public class UserQuizManager extends BaseManager {
         }
     }
 
-    public List<UserQuiz> getOrderedUserQuizList() {
+    @Cacheable(value = CacheConstants.USER_QUIZ_LIST, key = "#userId", unless = "#result == null")
+    public List<UserQuizCacheable> getOrderedUserQuizList(String userId) {
         try {
-            return userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDateDesc(getAppId(), getUserId());
+            List<UserQuiz> userQuizList = userQuizRepository.findAllByAppIdAndUserIdOrderByCompleteDateDesc(getAppId(), userId);
+            return userQuizList.stream().map(userQuizMapper::userQuizToUserQuizCacheable).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
             return Collections.emptyList();
         }
     }
 
-    @Cacheable(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId") //todo bu cache de proxy objeye atılmalı
-    public List<UserQuiz> getUserQuizList(String userId) {
+    @Cacheable(value = CacheConstants.USER_QUIZ_FOR_ANALYTICS, key = "#userId")
+    public List<UserQuizCacheable> getUserQuizList(String userId) {
         try {
-            return userQuizRepository.findAllByAppIdAndUserId(getAppId(), getUserId());
+            List<UserQuiz> userQuizList = userQuizRepository.findAllByAppIdAndUserId(getAppId(), getUserId());
+            return userQuizList.stream().map(userQuizMapper::userQuizToUserQuizCacheable).collect(Collectors.toList());
         } catch (Exception e) {
             logger.error("getUserQuizList got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
             return Collections.emptyList();
@@ -117,7 +121,7 @@ public class UserQuizManager extends BaseManager {
 
     public long getUserQuizCount(UserQuizState userQuizState) {
         try {
-            return userQuizRepository.countByAppIdAndUserIdAndState(getAppId(), getUserId(),userQuizState);
+            return userQuizRepository.countByAppIdAndUserIdAndState(getAppId(), getUserId(), userQuizState);
         } catch (Exception e) {
             logger.error("getUserQuizCount got exception.userId:{} appId:{}", getUserId(), getAppId(), e);
             return 0;
@@ -146,7 +150,7 @@ public class UserQuizManager extends BaseManager {
     }
 
     private void clearUserRelatedCache() {
-        cacheProviderManager.evictUserQuizListCache(getUserId(), getAppId());
+        cacheProviderManager.evictUserQuizListCache(getUserId());
         cacheProviderManager.evictUserDataCache(getUserId());
         cacheProviderManager.evictUserQuizForAnalyticsCache(getUserId());
     }

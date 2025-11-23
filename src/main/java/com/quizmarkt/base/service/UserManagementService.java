@@ -8,7 +8,6 @@ import com.quizmarkt.base.data.request.SignInRequest;
 import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
-import com.quizmarkt.base.manager.CacheProviderManager;
 import com.quizmarkt.base.manager.UserManagementManager;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 public class UserManagementService extends BaseService {
 
     private final UserManagementManager userManagementManager;
-    private final CacheProviderManager cacheProviderManager;
 
     public ApiResponse<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
         String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(), request.getToken(), request.getAppId()));

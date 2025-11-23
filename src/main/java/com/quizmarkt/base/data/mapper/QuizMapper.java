@@ -1,12 +1,13 @@
 package com.quizmarkt.base.data.mapper;
 
+import com.quizmarkt.base.data.cache.QuizResponseInListViewCacheable;
+import com.quizmarkt.base.data.cache.QuizResponseQuestionsSortedCacheable;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.entity.UserQuiz;
-import com.quizmarkt.base.data.enums.PremiumType;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuiz;
-import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.data.response.QuizResponseWithUserData;
+import com.quizmarkt.base.data.response.QuizResponseWithUserQuizData;
 import com.quizmarkt.base.util.MapperUtils;
 import com.quizmarkt.base.util.UserQuizUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -30,10 +31,11 @@ public interface QuizMapper {
     QuizResponseWithUserData mapSingleQuiz(Quiz quiz);
 
     //using mapSingleQuiz
-    List<QuizResponseWithUserData> toQuizResponseWithUserData(List<Quiz> quiz);
+    List<QuizResponseInListViewCacheable> toQuizResponseInListViewCacheable(List<Quiz> quiz);
 
-    default QuizResponseWithUserData getQuizResponseWithUserData(UserQuiz userQuiz, PremiumType userPremiumType,QuizResponseWithUserData quizResponseWithUserData) {
-        quizResponseWithUserData.setLocked(!quizResponseWithUserData.getAvailablePremiumTypes().contains(userPremiumType));
+    default QuizResponseWithUserData getQuizResponseWithUserData(UserQuiz userQuiz, boolean isLocked) {
+        QuizResponseWithUserData quizResponseWithUserData = new QuizResponseWithUserData();
+        quizResponseWithUserData.setLocked(isLocked);
         if (userQuiz != null) {
             quizResponseWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
             quizResponseWithUserData.setCorrectCount(userQuiz.getCorrectQuestionList().size());
@@ -44,7 +46,9 @@ public interface QuizMapper {
         return quizResponseWithUserData;
     }
 
-    QuizResponse toQuizResponse(Quiz quiz);
+    QuizResponseQuestionsSortedCacheable toQuizResponse(Quiz quiz);
+
+    QuizResponseWithUserQuizData toQuizResponseWithUserQuizData(QuizResponseQuestionsSortedCacheable quizResponseQuestionsSortedCacheable);
 
     default Optional<Quiz> toQuizEntity(CreateOrUpdateQuiz request, Optional<Quiz> optionalQuiz) {
         try {

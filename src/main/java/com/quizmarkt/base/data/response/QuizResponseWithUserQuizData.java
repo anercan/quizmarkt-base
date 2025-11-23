@@ -15,7 +15,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = false)
 @SuperBuilder
 @Data
-public class QuizResponse {
+public class QuizResponseWithUserQuizData {
     private Long id;
     private String name;
     private Map<String, String> attributes;

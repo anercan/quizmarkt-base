@@ -82,10 +82,26 @@ public class AdminCRUDService extends BaseAppSupport {
         if (question.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+        if (!validateAnswers(question)) {
+            return ResponseEntity.badRequest().build();
+        }
         CreateOrUpdateAnswer correctAnswer = request.getCreateOrUpdateAnswerList().stream().filter(CreateOrUpdateAnswer::isCorrectAnswer).findFirst().orElse(null); //todo clienttan update durumunda correct answer gelmiyo kontrol et
         Question savedQuestion = saveQuestionWithAnswers(question.get(), request.getQuizId(), correctAnswer);
 
         return ResponseEntity.ok().build();
+    }
+
+    private boolean validateAnswers(Optional<Question> question) {
+        List<Answer> answers = question.get().getAnswersList();
+
+        Set<String> contents = new HashSet<>();
+
+        for (Answer answer : answers) {
+            if (!contents.add(answer.getContent())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public ResponseEntity<List<Quiz>> getQuizListWithGroupIfExist(QuizListWithGroupIdRequest request) {

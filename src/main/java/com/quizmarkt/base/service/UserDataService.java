@@ -1,11 +1,11 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.cache.UserDataResponse;
+import com.quizmarkt.base.data.cache.UserQuizCacheable;
+import com.quizmarkt.base.data.cache.UserWrongAnswerCacheable;
 import com.quizmarkt.base.data.constant.CacheConstants;
-import com.quizmarkt.base.data.entity.UserQuiz;
-import com.quizmarkt.base.data.entity.UserWrongAnswer;
 import com.quizmarkt.base.data.enums.UserQuizState;
 import com.quizmarkt.base.data.response.ActivityData;
-import com.quizmarkt.base.data.response.UserDataResponse;
 import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.manager.QuizManager;
 import com.quizmarkt.base.manager.UserQuizManager;
@@ -31,7 +31,7 @@ public class UserDataService extends BaseService {
     private final QuizManager quizManager;
 
     @Cacheable(value = CacheConstants.USER_DATA, key = "#userId")
-    public UserDataResponse getPremiumUserData(Optional<UserInfo> userInfo, String userId) {
+    public UserDataResponse getUserData(Optional<UserInfo> userInfo, String userId) {
         return UserDataResponse.builder()
                 .totalQuizCount(quizManager.getActiveQuizCount())
                 .userSolvedQuizCount(userQuizManager.getUserQuizCount(UserQuizState.COMPLETED))
@@ -40,7 +40,7 @@ public class UserDataService extends BaseService {
                 .build();
     }
 
-    public List<ActivityData> getActivityData(List<UserQuiz> userQuizList) {
+    public List<ActivityData> getActivityData(List<UserQuizCacheable> userQuizList) {
         if (CollectionUtils.isEmpty(userQuizList)) {
             return Collections.emptyList();
         }
@@ -60,7 +60,7 @@ public class UserDataService extends BaseService {
         }
     }
 
-    public Map<String, Integer> getWrongsInfo(List<UserQuiz> userQuizList) {
+    public Map<String, Integer> getWrongsInfo(List<UserQuizCacheable> userQuizList) {
         if (CollectionUtils.isEmpty(userQuizList)) {
             return Collections.emptyMap();
         }
@@ -69,7 +69,7 @@ public class UserDataService extends BaseService {
                     .flatMap(userQuiz ->
                             userQuiz.getWrongQuestionList()
                                     .stream()
-                                    .map(UserWrongAnswer::getQuestion)
+                                    .map(UserWrongAnswerCacheable::getQuestion)
                     ).filter(question -> StringUtils.isNotEmpty(question.getAttributes().get("subject")))
                     .collect(Collectors.toMap(
                             question -> question.getAttributes().get("subject"),

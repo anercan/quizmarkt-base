@@ -1,13 +1,15 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.cache.QuizResponseInListViewCacheable;
+import com.quizmarkt.base.data.cache.QuizResponseQuestionsSortedCacheable;
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.Quiz;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.repository.QuizRepository;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
-import com.quizmarkt.base.data.response.QuizResponse;
-import com.quizmarkt.base.data.response.QuizResponseWithUserData;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -36,11 +38,11 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    public Optional<Quiz> getQuizWithIdQuestionsSorted(Long quizId) {
+    public Optional<Quiz> getQuizWithActiveQuestionsSorted(Long quizId) {
         try {
-            return quizRepository.findQuizWithQuestionsSorted(quizId);
+            return quizRepository.findQuizWithActiveQuestionsSorted(quizId);
         } catch (Exception e) {
-            logger.error("getQuizWithIdQuestionsSorted got exception.userId:{}", getUserId(), e);
+            logger.error("getQuizWithId got exception.userId:{}", getUserId(), e);
             return Optional.empty();
         }
     }
@@ -54,15 +56,15 @@ public class QuizManager extends BaseManager {
         }
     }
 
-    //@Cacheable(value = CacheConstants.QUIZ, key = "#quizId", unless = "#result == null") cache kirlenmesi oluyo aldıktan sonra setlediğin için farklı sınıfı cache at
-    public QuizResponse getQuizResponseWithId(Long quizId) {
-        Optional<Quiz> quizResponseOpt = getQuizWithIdQuestionsSorted(quizId);
+    @Cacheable(value = CacheConstants.QUIZ, key = "#quizId", unless = "#result == null")
+    public QuizResponseQuestionsSortedCacheable getQuizWithIdSorted(Long quizId) {
+        Optional<Quiz> quizResponseOpt = getQuizWithActiveQuestionsSorted(quizId);
         return quizResponseOpt.map(quizMapper::toQuizResponse).orElse(null);
     }
 
-    //@Cacheable(value = CacheConstants.QUIZ_LIST, key = "#request.quizGroupId", unless = "#result == null || #result.isEmpty()") cache kirlenmesi oluyo aldıktan sonra setlediğin için farklı sınıfı cache at
-    public List<QuizResponseWithUserData> getQuizResponseWithUserDataList(QuizListWithUserDataRequest request) {
+    @Cacheable(value = CacheConstants.QUIZ_LIST, key = "#request.quizGroupId", unless = "#result == null || #result.isEmpty()")
+    public List<QuizResponseInListViewCacheable> getQuizResponseWithUserDataList(QuizListWithUserDataRequest request) {
         List<Quiz> quizList = getActiveQuizListWithGroupId(request);
-        return quizMapper.toQuizResponseWithUserData(quizList);
+        return quizMapper.toQuizResponseInListViewCacheable(quizList);
     }
 }

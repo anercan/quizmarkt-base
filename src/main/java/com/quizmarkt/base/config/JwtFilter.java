@@ -23,7 +23,7 @@ public class JwtFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         if (canSkipFilter(httpRequest)) {
-            log.warn("JWT filter will skipped for req:{}", httpRequest.getRequestURI());
+            log.warn("JWT filter will skipped for req:{} method:{}", httpRequest.getRequestURI(), httpRequest.getMethod());
             chain.doFilter(request, response);
             return;
         }

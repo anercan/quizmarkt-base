@@ -24,7 +24,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @EntityGraph(attributePaths = {"attributes"})
     List<Quiz> findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(QuizGroup quizGroup, boolean active);
 
-    List<Quiz> findAllByAppId(int appId,Pageable pageable);
+    List<Quiz> findAllByAppId(int appId, Pageable pageable);
 
     List<Quiz> findAllByQuizGroupListContainingOrderByPriorityAsc(QuizGroup quizGroup, Pageable pageable);
 
@@ -33,11 +33,10 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     @Cacheable(value = CacheConstants.QUIZ_COUNT, key = "#appId")
     int countAllByActiveAndAppId(boolean active, int appId);
 
-    //@EntityGraph(attributePaths = {"questionList"}) todo requires native query
     @Query("SELECT quiz FROM Quiz quiz " +
             "LEFT JOIN FETCH quiz.questionList q " +
             "WHERE quiz.id = :quizId and q.active = true " +
             "ORDER BY q.priority ASC")
-    Optional<Quiz> findQuizWithQuestionsSorted(@Param("quizId") Long quizId);
+    Optional<Quiz> findQuizWithActiveQuestionsSorted(@Param("quizId") Long quizId); // to retreive active questions this one better
 
 }

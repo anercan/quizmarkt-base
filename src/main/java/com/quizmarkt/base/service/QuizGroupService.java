@@ -1,6 +1,6 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.QuizGroup;
+import com.quizmarkt.base.data.cache.QuizGroupCacheable;
 import com.quizmarkt.base.data.mapper.QuizGroupMapper;
 import com.quizmarkt.base.data.request.PageRequest;
 import com.quizmarkt.base.data.request.QuizGroupRequest;
@@ -30,8 +30,8 @@ public class QuizGroupService extends BaseService {
     private final UserQuizManager userQuizManager;
 
     public ApiResponse<QuizGroupResponse> getQuizGroupsWithUserInfo(@RequestBody QuizGroupRequest request) {
-        List<QuizGroup> quizGroupList = quizGroupManager.getActiveQuizGroups(PageRequest.builder().page(request.getPage()).pageSize(request.getPageSize()).build());
-        Map<Long, Integer> userQuizMap = userQuizManager.getUserQuizGroupIdQuizCountMap(quizGroupList.stream().map(QuizGroup::getId).collect(Collectors.toSet()));
+        List<QuizGroupCacheable> quizGroupList = quizGroupManager.getActiveQuizGroups(PageRequest.builder().page(request.getPage()).pageSize(request.getPageSize()).build(), getAppId());
+        Map<Long, Integer> userQuizMap = userQuizManager.getUserQuizGroupIdQuizCountMap(quizGroupList.stream().map(QuizGroupCacheable::getId).collect(Collectors.toSet()));
         List<QuizGroupWithUserData> quizGroupWithUserDataList = quizGroupList.stream().map(quizGroup -> quizGroupMapper.getQuizGroupWithUserData(userQuizMap, quizGroup)).collect(Collectors.toList());
         return new ApiResponse<>(QuizGroupResponse.builder().quizGroupWithUserDataList(quizGroupWithUserDataList).build());
     }

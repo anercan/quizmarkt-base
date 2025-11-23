@@ -1,13 +1,15 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.cache.QuizResponseInListViewCacheable;
+import com.quizmarkt.base.data.cache.QuizResponseQuestionsSortedCacheable;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.QuizMapper;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.request.QuizListWithUserDataRequest;
 import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.QuizListResponse;
-import com.quizmarkt.base.data.response.QuizResponse;
 import com.quizmarkt.base.data.response.QuizResponseWithUserData;
+import com.quizmarkt.base.data.response.QuizResponseWithUserQuizData;
 import com.quizmarkt.base.manager.QuizManager;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
@@ -32,26 +34,29 @@ public class QuizService extends BaseService {
     private final QuizMapper quizMapper;
     private final UserQuizMapper userQuizMapper;
 
-    //@Transactional(readOnly = true)
     public ApiResponse<QuizListResponse> getQuizListWithUserData(QuizListWithUserDataRequest request) {
-        List<QuizResponseWithUserData> quizResponseWithUserDataList = quizManager.getQuizResponseWithUserDataList(request);
+        List<QuizResponseInListViewCacheable> quizResponseInListViewListCacheable = quizManager.getQuizResponseWithUserDataList(request);
         Map<Long, UserQuiz> quizIdUserQuizMap = userQuizManager.getQuizIdAndSolvedQuestionCountMap(request.getQuizGroupId());
-        List<QuizResponseWithUserData> quizWithUserDataList = quizResponseWithUserDataList.stream().map(quizWithUserData -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap.get(quizWithUserData.getId()), getPremiumType(), quizWithUserData)).collect(Collectors.toList());
+        List<QuizResponseWithUserData> quizWithUserDataList = quizResponseInListViewListCacheable
+                .stream()
+                .map(quizResponseInListViewCacheable -> quizMapper.getQuizResponseWithUserData(quizIdUserQuizMap.get(quizResponseInListViewCacheable.getId()), !quizResponseInListViewCacheable.getAvailablePremiumTypes().contains(getPremiumType())))
+                .collect(Collectors.toList());
         return new ApiResponse<>(QuizListResponse.builder().quizResponseWithUserDataList(quizWithUserDataList).build());
     }
 
-    public ApiResponse<QuizResponse> getQuizWithUserQuizData(Long quizId) {
-        QuizResponse quizResponse = quizManager.getQuizResponseWithId(quizId);
-        if (Objects.isNull(quizResponse)) {
+    public ApiResponse<QuizResponseWithUserQuizData> getQuizWithUserQuizData(Long quizId) {
+        QuizResponseQuestionsSortedCacheable quizResponseQuestionsSortedCacheable = quizManager.getQuizWithIdSorted(quizId);
+        if (Objects.isNull(quizResponseQuestionsSortedCacheable)) {
             return new ApiResponse<>(ApiResponse.Status.fail());
         }
-        if (!quizResponse.getAvailablePremiumTypes().contains(getPremiumType())) {
+        if (!quizResponseQuestionsSortedCacheable.getAvailablePremiumTypes().contains(getPremiumType())) {
             logger.warn("getQuizWithUserQuizData without correct premium info.userId:{} quizId:{}", getUserId(), quizId);
             return new ApiResponse<>(ApiResponse.Status.notAuthorizedPremiumOperation("getQuizListWithUserData"));
         }
         Optional<UserQuiz> userQuizOptional = userQuizManager.getUserQuizWithQuizIdAndUserId(quizId);
-        userQuizOptional.ifPresent(userQuiz -> quizResponse.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
-        return new ApiResponse<>(quizResponse);
+        QuizResponseWithUserQuizData quizResponseWithUserQuizData = quizMapper.toQuizResponseWithUserQuizData(quizResponseQuestionsSortedCacheable);
+        userQuizOptional.ifPresent(userQuiz -> quizResponseWithUserQuizData.setUserQuiz(userQuizMapper.toUserQuizResponse(userQuiz)));
+        return new ApiResponse<>(quizResponseWithUserQuizData);
     }
 
 }

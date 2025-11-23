@@ -3,7 +3,7 @@ package com.quizmarkt.base.controller;
 import com.quizmarkt.base.data.request.AddOrRemoveFavoriteRequest;
 import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.FavoriteQuestionIdsResponse;
-import com.quizmarkt.base.data.response.QuizResponse;
+import com.quizmarkt.base.data.response.QuizResponseForFavorites;
 import com.quizmarkt.base.service.UserFavoriteService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class UserFavoriteController extends BaseController {
     }
 
     @GetMapping("/get-user-questions")
-    public ResponseEntity<ApiResponse<QuizResponse>> getUserFavorites() {
+    public ResponseEntity<ApiResponse<QuizResponseForFavorites>> getUserFavorites() {
         return respond(userFavoriteService.getUserFavoriteQuestions());
     }
 

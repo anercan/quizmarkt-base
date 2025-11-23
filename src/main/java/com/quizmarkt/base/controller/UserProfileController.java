@@ -1,8 +1,8 @@
 package com.quizmarkt.base.controller;
 
+import com.quizmarkt.base.data.cache.UserDataResponse;
 import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.UserActivityData;
-import com.quizmarkt.base.data.response.UserDataResponse;
 import com.quizmarkt.base.data.response.UserQuizAnalyseResponse;
 import com.quizmarkt.base.service.ProfileService;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,7 @@
 package com.quizmarkt.base.data.repository;
 
-import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.enums.UserQuizState;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -44,7 +42,6 @@ public interface UserQuizRepository extends JpaRepository<UserQuiz, Long> {
     })
     List<UserQuiz> findAllByAppIdAndUserId(int appId, String userId);
 
-    @Cacheable(value = CacheConstants.USER_QUIZ_LIST, key = "#appId + #userId")
     @EntityGraph(attributePaths = {"wrongQuestionList", "quiz.attributes"})
     List<UserQuiz> findAllByAppIdAndUserIdOrderByCompleteDateDesc(int appId, String userId);
 

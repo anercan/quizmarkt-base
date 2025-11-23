@@ -22,7 +22,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
                 FROM question q
                          JOIN quiz_questions qq ON q.id = qq.question_id
                          JOIN quiz z ON qq.quiz_id = z.id
-                WHERE z.app_id = :appId and q.active = 1
+                WHERE z.app_id = :appId and q.active is true
                 ORDER BY RANDOM();
             """, nativeQuery = true)
     List<Question> findRandomQuestionsWithAppId(@Param("appId") int appId, Pageable pageable); // todo pageable yerine limit ve cache

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.service;
 
+import com.quizmarkt.base.data.cache.UserQuizCacheable;
 import com.quizmarkt.base.data.entity.UserQuiz;
 import com.quizmarkt.base.data.mapper.UserQuizMapper;
 import com.quizmarkt.base.data.request.CreateUpdateUserQuizRequest;
@@ -28,10 +29,9 @@ public class UserQuizService extends BaseService {
     //@Transactional(readOnly = true) todo
     public ApiResponse<UserQuizListResponse> getUserQuizList() {
         List<SolvedQuizListResponse> userQuizInListResponses = new ArrayList<>();
-        List<UserQuiz> userQuizList = userQuizManager.getOrderedUserQuizList();
-        for (UserQuiz userQuiz : userQuizList) {
+        List<UserQuizCacheable> userQuizList = userQuizManager.getOrderedUserQuizList(getUserId());
+        for (UserQuizCacheable userQuiz : userQuizList) {
             SolvedQuizListResponse userQuizInListResponse = userQuizMapper.toUserQuizListResponse(userQuiz);
-            //userQuizInListResponse.setQuizGroupName(getQuizGroupNameFromUserQuiz(userQuiz, quizGroupId));
             userQuizInListResponses.add(userQuizInListResponse);
         }
         return new ApiResponse<>(UserQuizListResponse.builder()

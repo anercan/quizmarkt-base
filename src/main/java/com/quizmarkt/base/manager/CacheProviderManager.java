@@ -21,8 +21,8 @@ public class CacheProviderManager extends BaseManager {
         return cacheManager.getCache(cacheName);
     }
 
-    @CacheEvict(value = CacheConstants.USER_QUIZ_LIST, key = "#appId + #userId")
-    public void evictUserQuizListCache(String userId, Integer appId) {
+    @CacheEvict(value = CacheConstants.USER_QUIZ_LIST, key = "#userId")
+    public void evictUserQuizListCache(String userId) {
         // This method is used to evict the USER_QUIZ_LIST cache
     }
 
@@ -44,9 +44,12 @@ public class CacheProviderManager extends BaseManager {
     public void evictQuizGroupRelatedCaches() {
     }
 
-    @CacheEvict(value = {CacheConstants.QUIZ_LIST, CacheConstants.QUIZ}, allEntries = true)
+    @CacheEvict(value = {CacheConstants.QUIZ_LIST, CacheConstants.QUIZ, CacheConstants.USER_FAVORITES}, allEntries = true)
     public void evictQuestionRelatedCaches() {
     }
 
-
+    @CacheEvict(value = CacheConstants.USER_FAVORITES, key = "#userId")
+    public void evictUserFavoritesCache(String userId) {
+        // This method is used to evict the USER_FAVORITES cache
+    }
 }

@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.mapper;
 
+import com.quizmarkt.base.data.cache.UserQuizCacheable;
 import com.quizmarkt.base.data.entity.Answer;
 import com.quizmarkt.base.data.entity.Question;
 import com.quizmarkt.base.data.entity.UserQuiz;
@@ -21,7 +22,7 @@ public interface UserQuizMapper {
 
     UserQuizResponse toUserQuizResponse(UserQuiz userQuiz);
 
-    SolvedQuizListResponse toUserQuizListResponse(UserQuiz userQuiz);
+    SolvedQuizListResponse toUserQuizListResponse(UserQuizCacheable userQuiz);
 
     List<UserWrongAnswerResponse> toListUserWrongAnswerResponse(List<UserWrongAnswer> userWrongAnswerList);
 
@@ -35,4 +36,6 @@ public interface UserQuizMapper {
         userWrongAnswer.setWrongAnswer(wrongAnswer);
         return userWrongAnswer;
     }
+
+    UserQuizCacheable userQuizToUserQuizCacheable(UserQuiz userQuiz);
 }

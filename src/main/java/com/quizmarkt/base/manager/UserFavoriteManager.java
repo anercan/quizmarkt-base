@@ -1,9 +1,11 @@
 package com.quizmarkt.base.manager;
 
+import com.quizmarkt.base.data.constant.CacheConstants;
 import com.quizmarkt.base.data.entity.UserFavorites;
 import com.quizmarkt.base.data.repository.UserFavoriteRepository;
 import com.quizmarkt.base.data.response.FavoriteQuestionIdsResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -22,7 +24,8 @@ public class UserFavoriteManager extends BaseManager {
     public static final int FAV_LIMIT = 24;
     private final UserFavoriteRepository userFavoriteRepository;
 
-    public List<Long> getUserFavoriteQuestionIds() {
+    @Cacheable(value = CacheConstants.USER_FAVORITES, key = "#userId")
+    public List<Long> getUserFavoriteQuestionIds(String userId) {
         Optional<UserFavorites> favoriteOpt = userFavoriteRepository.findByUserId(getUserId());
         if (favoriteOpt.isPresent()) {
             return favoriteOpt.get().getQuestionIds();

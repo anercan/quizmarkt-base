@@ -16,5 +16,4 @@ import lombok.NoArgsConstructor;
 public class PageRequest {
     private int pageSize;
     private int page;
-    private int appId = 1;
 }

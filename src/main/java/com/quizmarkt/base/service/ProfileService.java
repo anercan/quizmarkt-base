@@ -1,7 +1,11 @@
 package com.quizmarkt.base.service;
 
-import com.quizmarkt.base.data.entity.UserQuiz;
-import com.quizmarkt.base.data.response.*;
+import com.quizmarkt.base.data.cache.UserDataResponse;
+import com.quizmarkt.base.data.cache.UserQuizCacheable;
+import com.quizmarkt.base.data.response.ApiResponse;
+import com.quizmarkt.base.data.response.UserActivityData;
+import com.quizmarkt.base.data.response.UserInfo;
+import com.quizmarkt.base.data.response.UserQuizAnalyseResponse;
 import com.quizmarkt.base.manager.UserManagementManager;
 import com.quizmarkt.base.manager.UserQuizManager;
 import lombok.AllArgsConstructor;
@@ -16,7 +20,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class ProfileService extends BaseService {
+public class ProfileService extends BaseService { // todo user Quize domainine tasinabilir
 
     private final UserDataService userDataService;
     private final UserManagementManager userManagementManager;
@@ -24,7 +28,7 @@ public class ProfileService extends BaseService {
 
     public ApiResponse<UserDataResponse> getUserData() {
         Optional<UserInfo> userInfo = getUserInfo();
-        return new ApiResponse<>(userDataService.getPremiumUserData(userInfo, getUserId()));
+        return new ApiResponse<>(userDataService.getUserData(userInfo, getUserId()));
     }
 
     private Optional<UserInfo> getUserInfo() {
@@ -36,12 +40,12 @@ public class ProfileService extends BaseService {
     }
 
     public ApiResponse<UserQuizAnalyseResponse> getUserQuizAnalyses() {
-        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(getUserId());
+        List<UserQuizCacheable> userQuizList = userQuizManager.getUserQuizList(getUserId());
         return new ApiResponse<>(UserQuizAnalyseResponse.builder().wrongsMap(userDataService.getWrongsInfo(userQuizList)).build());
     }
 
     public ApiResponse<UserActivityData> getUserActivityData() {
-        List<UserQuiz> userQuizList = userQuizManager.getUserQuizList(getUserId());
+        List<UserQuizCacheable> userQuizList = userQuizManager.getUserQuizList(getUserId());
         return new ApiResponse<>(UserActivityData.builder().activityDataList(userDataService.getActivityData(userQuizList)).build());
     }
 }

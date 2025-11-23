@@ -1,5 +1,6 @@
 package com.quizmarkt.base.data.mapper;
 
+import com.quizmarkt.base.data.cache.QuizGroupCacheable;
 import com.quizmarkt.base.data.entity.QuizGroup;
 import com.quizmarkt.base.data.request.admin.CreateOrUpdateQuizGroup;
 import com.quizmarkt.base.data.response.QuizGroupWithUserData;
@@ -17,9 +18,9 @@ import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface QuizGroupMapper {
-    QuizGroupWithUserData toQuizGroupResponse(QuizGroup entity);
+    QuizGroupWithUserData toQuizGroupResponse(QuizGroupCacheable cacheableEntity);
 
-    default QuizGroupWithUserData getQuizGroupWithUserData(Map<Long, Integer> userQuizMap, QuizGroup quizGroup) {
+    default QuizGroupWithUserData getQuizGroupWithUserData(Map<Long, Integer> userQuizMap, QuizGroupCacheable quizGroup) {
         QuizGroupWithUserData quizGroupWithUserData = this.toQuizGroupResponse(quizGroup);
         Integer userSolvedCount = userQuizMap.get(quizGroup.getId());
         quizGroupWithUserData.setUserSolvedCount(Objects.isNull(userSolvedCount) ? 0 : userSolvedCount);
@@ -45,4 +46,6 @@ public interface QuizGroupMapper {
             return Optional.empty();
         }
     }
+
+    QuizGroupCacheable quizGroupToQuizGroupCacheable(QuizGroup quizGroup);
 }
