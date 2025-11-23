@@ -33,8 +33,8 @@ public interface QuizMapper {
     //using mapSingleQuiz
     List<QuizResponseInListViewCacheable> toQuizResponseInListViewCacheable(List<Quiz> quiz);
 
-    default QuizResponseWithUserData getQuizResponseWithUserData(UserQuiz userQuiz, boolean isLocked) {
-        QuizResponseWithUserData quizResponseWithUserData = new QuizResponseWithUserData();
+    default QuizResponseWithUserData getQuizResponseWithUserData(QuizResponseInListViewCacheable quiz, UserQuiz userQuiz, boolean isLocked) {
+        QuizResponseWithUserData quizResponseWithUserData = quizResponseWithUserDataToQuizResponseInListViewCacheable(quiz);
         quizResponseWithUserData.setLocked(isLocked);
         if (userQuiz != null) {
             quizResponseWithUserData.setSolvedCount(UserQuizUtil.getSolvedQuestionDataOfUserQuiz(userQuiz));
@@ -74,4 +74,9 @@ public interface QuizMapper {
             return Optional.empty();
         }
     }
+
+    @Mapping(source = "activeQuestionCount", target = "questionCount")
+    QuizResponseWithUserData quizResponseWithUserDataToQuizResponseInListViewCacheable(QuizResponseInListViewCacheable quiz);
+
 }
+

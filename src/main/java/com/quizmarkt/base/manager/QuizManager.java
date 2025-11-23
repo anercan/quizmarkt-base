@@ -27,17 +27,6 @@ public class QuizManager extends BaseManager {
     private final QuizRepository quizRepository;
     private final QuizMapper quizMapper;
 
-    public List<Quiz> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) { //todo pageable
-        try {
-            QuizGroup quizGroup = new QuizGroup();
-            quizGroup.setId(request.getQuizGroupId());
-            return quizRepository.findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(quizGroup, true);
-        } catch (Exception e) {
-            logger.error("getQuizListWithGroupId got exception.userId:{},groupId:{}", getUserId(), e);
-            return Collections.emptyList();
-        }
-    }
-
     public Optional<Quiz> getQuizWithActiveQuestionsSorted(Long quizId) {
         try {
             return quizRepository.findQuizWithActiveQuestionsSorted(quizId);
@@ -63,8 +52,15 @@ public class QuizManager extends BaseManager {
     }
 
     @Cacheable(value = CacheConstants.QUIZ_LIST, key = "#request.quizGroupId", unless = "#result == null || #result.isEmpty()")
-    public List<QuizResponseInListViewCacheable> getQuizResponseWithUserDataList(QuizListWithUserDataRequest request) {
-        List<Quiz> quizList = getActiveQuizListWithGroupId(request);
-        return quizMapper.toQuizResponseInListViewCacheable(quizList);
+    public List<QuizResponseInListViewCacheable> getActiveQuizListWithGroupId(QuizListWithUserDataRequest request) {
+        try {
+            QuizGroup quizGroup = new QuizGroup();
+            quizGroup.setId(request.getQuizGroupId());
+            List<Quiz> quizList = quizRepository.findAllByQuizGroupListContainingAndActiveOrderByPriorityAsc(quizGroup, true);
+            return quizMapper.toQuizResponseInListViewCacheable(quizList);
+        } catch (Exception e) {
+            logger.error("getQuizListWithGroupId got exception.userId:{},groupId:{}", getUserId(), e);
+            return Collections.emptyList();
+        }
     }
 }

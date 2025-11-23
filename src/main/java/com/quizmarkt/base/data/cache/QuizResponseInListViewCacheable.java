@@ -18,4 +18,5 @@ public class QuizResponseInListViewCacheable {
     private final int priority;
     private final Map<String, String> attributes;
     private final List<PremiumType> availablePremiumTypes;
+    private int activeQuestionCount;
 }
