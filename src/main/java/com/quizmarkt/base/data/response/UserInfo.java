@@ -1,13 +1,15 @@
 package com.quizmarkt.base.data.response;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author anercan
  */
 
-@Data
+@Getter
+@AllArgsConstructor
 public class UserInfo {
 
-    private String avatarUrl;
+    private final String avatarUrl;
 }
