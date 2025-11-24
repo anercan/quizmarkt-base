@@ -36,7 +36,7 @@ public class UserDataService extends BaseService {
                 .totalQuizCount(quizManager.getActiveQuizCount())
                 .userSolvedQuizCount(userQuizManager.getUserQuizCount(UserQuizState.COMPLETED))
                 .userOngoingQuizCount(userQuizManager.getUserQuizCount(UserQuizState.ON_GOING))
-                .avatarUrl(userInfo.map(UserInfo::getAvatarUrl).orElse(null))
+                .avatarUrl(userInfo.map(UserInfo::avatarUrl).orElse(null))
                 .build();
     }
 
