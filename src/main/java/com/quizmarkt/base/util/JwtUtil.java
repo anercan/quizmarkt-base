@@ -1,6 +1,7 @@
 package com.quizmarkt.base.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +32,10 @@ public class JwtUtil {
 
     public static Claims checkAndGetJWTClaims(String jwt) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getKey())
-                    .build().parseClaimsJws(jwt).getBody();
+            return Jwts.parserBuilder().setSigningKey(getKey()).build().parseClaimsJws(jwt).getBody();
+        } catch (ExpiredJwtException e) {
+            log.warn("checkAndGetJWTClaims got expiredJwtException for jwt:{}", jwt);
+            return null;
         } catch (Exception e) {
             log.error("checkAndGetJWTClaims got exception for jwt:{}", jwt, e);
             return null;
