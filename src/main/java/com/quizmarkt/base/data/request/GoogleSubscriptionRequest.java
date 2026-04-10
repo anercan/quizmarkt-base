@@ -18,7 +18,7 @@ public class GoogleSubscriptionRequest {
     private String transactionId;
     private boolean autoRenewingAndroid;
     @JsonDeserialize(using = DataAndroidDeserializer.class)
-    private String dataAndroid;
+    private DataAndroid dataAndroid;
     private String signatureAndroid;
     private boolean isAcknowledgedAndroid;
     private String packageNameAndroid;
