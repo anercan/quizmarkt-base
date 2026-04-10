@@ -1,5 +1,6 @@
 package com.quizmarkt.base.controller;
 
+import com.quizmarkt.base.data.request.AppleLoginRequest;
 import com.quizmarkt.base.data.request.GoogleLoginRequest;
 import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
 import com.quizmarkt.base.data.response.ApiResponse;
@@ -31,6 +32,11 @@ public class UserManagementController extends BaseController {
     @PostMapping("/google-play-subscribe")
     public ResponseEntity<ApiResponse<JwtResponse>> googlePlaySubscribe(@RequestBody GoogleSubscriptionRequest googleSubscriptionRequest) {
         return respond(userManagementService.googlePlaySubscribe(googleSubscriptionRequest));
+    }
+
+    @PostMapping("/apple-sign-in")
+    public ResponseEntity<ApiResponse<JwtResponse>> appleOATH2(@RequestBody AppleLoginRequest request) {
+        return respond(userManagementService.signInWithApple(request));
     }
 
 }

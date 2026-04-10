@@ -1,10 +1,7 @@
 package com.quizmarkt.base.service;
 
 import com.quizmarkt.base.data.enums.PremiumType;
-import com.quizmarkt.base.data.request.GoogleLoginRequest;
-import com.quizmarkt.base.data.request.GoogleSubscriptionRequest;
-import com.quizmarkt.base.data.request.PremiumInfoRequest;
-import com.quizmarkt.base.data.request.SignInRequest;
+import com.quizmarkt.base.data.request.*;
 import com.quizmarkt.base.data.response.ApiResponse;
 import com.quizmarkt.base.data.response.JwtResponse;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
@@ -30,7 +27,8 @@ public class UserManagementService extends BaseService {
     private final UserManagementManager userManagementManager;
 
     public ApiResponse<JwtResponse> signInWithGoogle(GoogleLoginRequest request) {
-        String jwt = userManagementManager.googleSignIn(getGoogleLoginRequest(request.getDeviceInfo(), request.getToken(), request.getAppId()));
+        request.setExpirationDate(Date.from(LocalDate.now().plusDays(28).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        String jwt = userManagementManager.googleSignIn(request);
         if (StringUtils.isNotEmpty(jwt)) {
             return new ApiResponse<>(JwtResponse.builder().jwt(jwt).build());
         } else {
@@ -38,13 +36,26 @@ public class UserManagementService extends BaseService {
         }
     }
 
-    private GoogleLoginRequest getGoogleLoginRequest(SignInRequest.DeviceInfo deviceInfo, String token, int appId) {
-        GoogleLoginRequest request = new GoogleLoginRequest();
+    public ApiResponse<JwtResponse> signInWithApple(AppleLoginRequest request) {
         request.setExpirationDate(Date.from(LocalDate.now().plusDays(28).atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        request.setAppId(appId);
-        request.setDeviceInfo(deviceInfo);
-        request.setToken(token);
-        return request;
+        String jwt = userManagementManager.appleSignIn(request);
+        if (StringUtils.isNotEmpty(jwt)) {
+            return new ApiResponse<>(JwtResponse.builder().jwt(jwt).build());
+        } else {
+            return new ApiResponse<>(ApiResponse.Status.fail("Login failed!"));
+        }
+    }
+
+    public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
+        HashMap<String, String> jwtClaims = new HashMap<>();
+        jwtClaims.put("ROLE", "ADMIN");
+        request.setJwtClaims(jwtClaims);
+        String jwt = userManagementManager.adminLogin(request);
+        if (StringUtils.isNotEmpty(jwt)) {
+            return ResponseEntity.ok(JwtResponse.builder().jwt(jwt).build());
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     public ApiResponse<JwtResponse> googlePlaySubscribe(GoogleSubscriptionRequest googleSubscriptionRequest) {
@@ -63,18 +74,6 @@ public class UserManagementService extends BaseService {
         } catch (Exception e) {
             logger.error("googlePlaySubscribe got exception.", e);
             return new ApiResponse<>(ApiResponse.Status.fail());
-        }
-    }
-
-    public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
-        HashMap<String, String> jwtClaims = new HashMap<>();
-        jwtClaims.put("ROLE", "ADMIN");
-        request.setJwtClaims(jwtClaims);
-        String jwt = userManagementManager.adminLogin(request);
-        if (StringUtils.isNotEmpty(jwt)) {
-            return ResponseEntity.ok(JwtResponse.builder().jwt(jwt).build());
-        } else {
-            return ResponseEntity.badRequest().build();
         }
     }
 }

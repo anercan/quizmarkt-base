@@ -15,11 +15,13 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    platform: postgres
     driver-class-name: org.postgresql.Driver
     url: ${POSTGRE_DB_URL:jdbc}
     username: ${POSTGRE_DB_USERNAME}
     password: ${POSTGRE_DB_PASSWORD}
+  sql:
+    init:
+      platform: postgres
 
 springdoc:
   swagger-ui:

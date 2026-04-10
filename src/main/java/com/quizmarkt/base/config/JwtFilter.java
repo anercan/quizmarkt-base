@@ -48,7 +48,7 @@ public class JwtFilter implements Filter {
 
     private boolean canSkipFilter(HttpServletRequest httpRequest) {
         String path = httpRequest.getRequestURI();
-        return HttpMethod.OPTIONS.matches(httpRequest.getMethod()) || path.contains("google-sign-in") || path.contains("admin/login") || path.contains("swagger") || path.contains("api-docs");
+        return HttpMethod.OPTIONS.matches(httpRequest.getMethod()) || path.contains("google-sign-in") || path.contains("apple-sign-in") || path.contains("admin/login") || path.contains("swagger") || path.contains("api-docs");
     }
 
     @Override

@@ -1,10 +1,7 @@
 package com.quizmarkt.base.manager;
 
 import com.quizmarkt.base.data.constant.CacheConstants;
-import com.quizmarkt.base.data.request.GoogleLoginRequest;
-import com.quizmarkt.base.data.request.PremiumInfoRequest;
-import com.quizmarkt.base.data.request.SignInRequest;
-import com.quizmarkt.base.data.request.UserFilterRequest;
+import com.quizmarkt.base.data.request.*;
 import com.quizmarkt.base.data.response.UpdatePremiumInfoResponse;
 import com.quizmarkt.base.data.response.UserInfo;
 import com.quizmarkt.base.data.response.UserManagementSignInResponse;
@@ -112,6 +109,22 @@ public class UserManagementManager extends BaseManager {
             }
         } catch (Exception e) {
             logger.error("getFilteredUsers failed for with cause:", e);
+            return null;
+        }
+    }
+
+    public String appleSignIn(AppleLoginRequest appleLoginRequest) {
+        try {
+            String endpoint = userManagementServiceEndpoint + "/user-management/sign-in/apple-auth";
+            ResponseEntity<UserManagementSignInResponse> response = userManagementRestTemplate.postForEntity(endpoint, appleLoginRequest, UserManagementSignInResponse.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody().getJwt();
+            } else {
+                logger.warn("callBasicSignInService has not succeed token:{}", appleLoginRequest.getIdentityToken());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("callBasicSignInService failed for token:{} with cause:", appleLoginRequest.getIdentityToken(), e);
             return null;
         }
     }

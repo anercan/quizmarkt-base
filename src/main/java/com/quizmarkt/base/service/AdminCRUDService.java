@@ -52,7 +52,6 @@ public class AdminCRUDService extends BaseAppSupport {
     private final CacheProviderManager cacheProviderManager;
     private final UserManagementService userManagementService;
     private final UserManagementManager userManagementManager;
-    private final UserQuizRepository userQuizRepository;
 
     public ResponseEntity<JwtResponse> adminLogin(SignInRequest request) {
         ResponseEntity<JwtResponse> response = userManagementService.adminLogin(request);
